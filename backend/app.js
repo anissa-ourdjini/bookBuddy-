@@ -22,7 +22,7 @@ app.use('/rewards', rewardRoutes);
 app.use('/auth', authRoutes);
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/bookbuddy', {
+mongoose.connect('mongodb://localhost:27017/BookBuddy', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
