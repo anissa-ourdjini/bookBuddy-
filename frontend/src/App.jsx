@@ -4,13 +4,11 @@ import BookList from './components/BookList.jsx';
 import FavoriteBooks from './components/FavoriteBooks.jsx';
 import Profile from './components/Profile.jsx';
 import Rewards from './components/Rewards.jsx';
-import Login from './components/Login.jsx';
-import Register from './components/Register.jsx';
+import Home from './components/Home.jsx';
 
 function App() {
   const [page, setPage] = useState('books');
   const [auth, setAuth] = useState(!!localStorage.getItem('token'));
-  const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
     setAuth(!!localStorage.getItem('token'));
@@ -23,11 +21,7 @@ function App() {
   };
 
   if (!auth) {
-    return showRegister ? (
-      <Register goToLogin={() => setShowRegister(false)} />
-    ) : (
-      <Login onLogin={() => setAuth(true)} goToRegister={() => setShowRegister(true)} />
-    );
+    return <Home />;
   }
 
   return (
