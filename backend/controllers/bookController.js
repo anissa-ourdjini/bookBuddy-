@@ -11,8 +11,8 @@ exports.addBook = async (req, res) => {
     await newBook.save();
     res.status(201).json(newBook);
   } catch (err) {
-    console.error('Erreur lors de l\'ajout du livre :', err);
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors de l\'ajout du livre :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
 
@@ -22,7 +22,8 @@ exports.getBooks = async (req, res) => {
     const books = await Book.find();
     res.json(books);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors de la récupération des livres :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
 
@@ -33,7 +34,8 @@ exports.getBookById = async (req, res) => {
     if (!book) return res.status(404).json({ message: 'Livre non trouvé.' });
     res.json(book);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors de la récupération du livre :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
 
@@ -49,7 +51,8 @@ exports.filterBooks = async (req, res) => {
     const books = await Book.find(filter);
     res.json(books);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors du filtrage des livres :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
 
@@ -65,7 +68,8 @@ exports.updateBook = async (req, res) => {
     if (!book) return res.status(404).json({ message: 'Livre non trouvé.' });
     res.json(book);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors de la mise à jour du livre :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
 
@@ -81,7 +85,8 @@ exports.updateProgress = async (req, res) => {
     if (!book) return res.status(404).json({ message: 'Livre non trouvé.' });
     res.json(book);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors de la mise à jour de la progression :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
 
@@ -102,7 +107,8 @@ exports.addFavorite = async (req, res) => {
     await user.save();
     res.json({ message: 'Livre ajouté aux favoris.', favorites: user.favorites });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors de l\'ajout aux favoris :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
 
@@ -123,6 +129,7 @@ exports.removeFavorite = async (req, res) => {
     await user.save();
     res.json({ message: 'Livre retiré des favoris.', favorites: user.favorites });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur lors du retrait des favoris :', err.message, err.errors || '', err.stack);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };

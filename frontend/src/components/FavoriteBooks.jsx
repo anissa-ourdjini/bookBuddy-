@@ -35,19 +35,20 @@ const FavoriteBooks = () => {
     });
   };
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <div className="text-center my-4">Chargement...</div>;
 
   return (
     <div>
-      <h2>Mes favoris</h2>
-      {books.length === 0 && <div>Aucun livre favori.</div>}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+      <h2 className="mb-4">Mes favoris</h2>
+      {books.length === 0 && <div className="alert alert-info">Aucun livre favori.</div>}
+      <div className="row g-3">
         {books.map(book => (
-          <BookComponent
-            key={book._id}
-            book={{ ...book, isFavorite: favorites[book._id] }}
-            onFavoriteChange={handleFavoriteChange}
-          />
+          <div className="col-md-4 col-sm-6" key={book._id}>
+            <BookComponent
+              book={{ ...book, isFavorite: favorites[book._id] }}
+              onFavoriteChange={handleFavoriteChange}
+            />
+          </div>
         ))}
       </div>
     </div>
