@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const authController = require('../backend/controllers/authController');
 
 // [POST] /auth/register : Créer un compte utilisateur
 router.post('/register', authController.register);

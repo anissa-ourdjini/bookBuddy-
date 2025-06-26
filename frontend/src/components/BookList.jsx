@@ -13,6 +13,23 @@ const BookList = () => {
   const [favorites, setFavorites] = useState({});
   const [error, setError] = useState('');
 
+  // Récupère les livres favoris de l'utilisateur
+  const fetchFavorites = async () => {
+    try {
+      const res = await fetch('/books/favorites', {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      if (!res.ok) return {};
+      const data = await res.json();
+      // Crée un objet { bookId: true }
+      const favs = {};
+      data.forEach(book => { favs[book._id] = true; });
+      return favs;
+    } catch {
+      return {};
+    }
+  };
+
   const fetchBooks = async () => {
     setError('');
     let url = '/books/filter?';
@@ -38,7 +55,11 @@ const BookList = () => {
     }
   };
 
-  useEffect(() => { fetchBooks(); }, [search, filters]);
+  // Initialisation des livres et des favoris
+  useEffect(() => {
+    fetchBooks();
+    fetchFavorites().then(setFavorites);
+  }, [search, filters]);
 
   // Met à jour l'état favori d'un livre (callback pour BookComponent)
   const handleFavoriteChange = (bookId, isFav) => {

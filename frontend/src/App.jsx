@@ -1,28 +1,37 @@
-import React, { useState } from 'react';
-import AddBookForm from './components/AddBookForm.jsx';
-import BookList from './components/BookList.jsx';
-import FavoriteBooks from './components/FavoriteBooks.jsx';
-import Profile from './components/Profile.jsx';
-import Rewards from './components/Rewards.jsx';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import BookList from './components/BookList';
+import AddBookForm from './components/AddBookForm';
+import FavoriteBooks from './components/FavoriteBooks';
+import Profile from './components/Profile';
+import Rewards from './components/Rewards';
+import Login from './components/Login';
+import Register from './components/Register';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-function App() {
-  const [page, setPage] = useState('books');
-  return (
-    <div className="container">
-      <nav style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-        <button onClick={() => setPage('books')}>Ma collection</button>
-        <button onClick={() => setPage('favorites')}>Mes favoris</button>
-        <button onClick={() => setPage('add')}>Ajouter un livre</button>
-        <button onClick={() => setPage('profile')}>Profil</button>
-        <button onClick={() => setPage('rewards')}>Récompenses</button>
-      </nav>
-      {page === 'add' && (<><h2>Ajouter un livre</h2><AddBookForm /></>)}
-      {page === 'books' && <BookList />}
-      {page === 'favorites' && <FavoriteBooks />}
-      {page === 'profile' && <Profile />}
-      {page === 'rewards' && <Rewards />}
-    </div>
-  );
-}
+const PrivateRoute = ({ element }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
+};
+
+const App = () => (
+  <AuthProvider>
+    <Router>
+      <Navbar />
+      <div className="main-container py-4">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<PrivateRoute element={<BookList />} />} />
+          <Route path="/add" element={<PrivateRoute element={<AddBookForm />} />} />
+          <Route path="/favorites" element={<PrivateRoute element={<FavoriteBooks />} />} />
+          <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
+          <Route path="/rewards" element={<PrivateRoute element={<Rewards />} />} />
+        </Routes>
+      </div>
+    </Router>
+  </AuthProvider>
+);
 
 export default App;

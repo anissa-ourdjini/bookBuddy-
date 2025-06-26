@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -10,16 +12,21 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Import routes
-const bookRoutes = require('./routes/bookRoutes');
-const userRoutes = require('./routes/userRoutes');
-const rewardRoutes = require('./routes/rewardRoutes');
-const authRoutes = require('./routes/authRoutes');
+const bookRoutes = require('../routes/bookRoutes');
+const userRoutes = require('../routes/userRoutes');
+const rewardRoutes = require('../routes/rewardRoutes');
+const authRoutes = require('../routes/authRoutes');
 
 // Use routes
 app.use('/books', bookRoutes);
 app.use('/users', userRoutes);
 app.use('/rewards', rewardRoutes);
 app.use('/auth', authRoutes);
+
+app.get('/test', (req, res) => {
+  console.log('Route /test appelée');
+  res.send('OK');
+});
 
 // MongoDB connection
 mongoose.connect('mongodb://localhost:27017/BookBuddy', {

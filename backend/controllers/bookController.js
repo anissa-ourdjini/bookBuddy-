@@ -1,4 +1,5 @@
 const Book = require('../models/Book');
+const Favorite = require('../models/Favorite');
 
 // Contrôleur des livres (squelettes)
 exports.addBook = async (req, res) => {
@@ -39,6 +40,7 @@ exports.getBookById = async (req, res) => {
 
 // [GET] /books/filter : Liste de livres filtrés
 exports.filterBooks = async (req, res) => {
+  console.log('filterBooks appelé', req.query);
   try {
     const { author, category, status, title } = req.query;
     const filter = {};
@@ -49,6 +51,7 @@ exports.filterBooks = async (req, res) => {
     const books = await Book.find(filter);
     res.json(books);
   } catch (err) {
+    console.error('Erreur lors du filtrage des livres :', err, err.stack);
     res.status(500).json({ message: 'Erreur serveur.' });
   }
 };
@@ -85,44 +88,41 @@ exports.updateProgress = async (req, res) => {
   }
 };
 
-// [POST] /books/:id/favorite : Ajouter un livre aux favoris (à adapter selon User)
+// Ajouter un livre aux favoris
 exports.addFavorite = async (req, res) => {
   try {
-    const userId = req.user && req.user.id;
-    if (!userId) return res.status(401).json({ message: 'Non autorisé.' });
+    const userId = req.user.id;
     const bookId = req.params.id;
-    const User = require('../models/User');
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
-    if (!user.favorites) user.favorites = [];
-    if (user.favorites.includes(bookId)) {
-      return res.status(400).json({ message: 'Livre déjà dans les favoris.' });
-    }
-    user.favorites.push(bookId);
-    await user.save();
-    res.json({ message: 'Livre ajouté aux favoris.', favorites: user.favorites });
+    const exists = await Favorite.findOne({ user: userId, book: bookId });
+    if (exists) return res.status(400).json({ message: 'Déjà en favori.' });
+    await Favorite.create({ user: userId, book: bookId });
+    res.json({ message: 'Ajouté aux favoris.' });
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur.' });
   }
 };
 
-// [DELETE] /books/:id/favorite : Retirer un livre des favoris (à adapter selon User)
+// Retirer un livre des favoris
 exports.removeFavorite = async (req, res) => {
   try {
-    const userId = req.user && req.user.id;
-    if (!userId) return res.status(401).json({ message: 'Non autorisé.' });
+    const userId = req.user.id;
     const bookId = req.params.id;
-    const User = require('../models/User');
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
-    if (!user.favorites) user.favorites = [];
-    if (!user.favorites.includes(bookId)) {
-      return res.status(400).json({ message: 'Livre non présent dans les favoris.' });
-    }
-    user.favorites = user.favorites.filter(favId => favId.toString() !== bookId);
-    await user.save();
-    res.json({ message: 'Livre retiré des favoris.', favorites: user.favorites });
+    await Favorite.deleteOne({ user: userId, book: bookId });
+    res.json({ message: 'Retiré des favoris.' });
   } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+// Récupérer les livres favoris de l'utilisateur
+exports.getFavorites = async (req, res) => {
+  try {
+    console.log('getFavorites appelé', req.user);
+    const userId = req.user.id;
+    const favorites = await Favorite.find({ user: userId }).populate('book');
+    res.json(favorites.map(fav => fav.book));
+  } catch (err) {
+    console.error('Erreur dans getFavorites :', err, err.stack);
     res.status(500).json({ message: 'Erreur serveur.' });
   }
 };

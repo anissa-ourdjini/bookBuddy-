@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-const API_URL = 'http://localhost:5000/books';
+const API_URL = '/books';
+const getToken = () => localStorage.getItem('token');
 
 const AddBookForm = () => {
   const [form, setForm] = useState({
@@ -8,6 +9,7 @@ const AddBookForm = () => {
   });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const validate = (field, value) => {
     let err = {};
@@ -25,8 +27,9 @@ const AddBookForm = () => {
     setErrors({ ...errors, ...validate(name, value) });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e, addToFavorite = false) => {
     e.preventDefault();
+    setLoading(true);
     let newErrors = {};
     Object.keys(form).forEach(field => {
       newErrors = { ...newErrors, ...validate(field, form[field]) };
@@ -35,16 +38,29 @@ const AddBookForm = () => {
     if (Object.keys(newErrors).length === 0) {
       const res = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
         body: JSON.stringify(form)
       });
-      if (res.ok) setSuccess('Livre ajouté !');
-      else setSuccess('Erreur lors de l\'ajout');
+      if (res.ok) {
+        setSuccess(addToFavorite ? 'Livre ajouté et mis en favori !' : 'Livre ajouté !');
+        const book = await res.json();
+        if (addToFavorite) {
+          await fetch(`/books/${book._id}/favorite`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+          });
+        }
+        setForm({ title: '', author: '', cover: '', status: '', pages: '', category: '' });
+      } else setSuccess('Erreur lors de l\'ajout');
     }
+    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
       <input name="title" placeholder="Titre" value={form.title} onChange={handleChange} />
       {errors.title && <span>{errors.title}</span>}
       <input name="author" placeholder="Auteur" value={form.author} onChange={handleChange} />
@@ -61,7 +77,10 @@ const AddBookForm = () => {
       {errors.pages && <span>{errors.pages}</span>}
       <input name="category" placeholder="Catégorie" value={form.category} onChange={handleChange} />
       {errors.category && <span>{errors.category}</span>}
-      <button type="submit">Ajouter</button>
+      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <button type="submit" disabled={loading} onClick={e => handleSubmit(e, false)}>Ajouter</button>
+        <button type="button" disabled={loading} onClick={e => handleSubmit(e, true)}>Ajouter aux favoris</button>
+      </div>
       {success && <div>{success}</div>}
     </form>
   );

@@ -10,6 +10,7 @@ export default defineConfig({
       '/users': 'http://localhost:5000',
       '/rewards': 'http://localhost:5000',
       '/auth': 'http://localhost:5000'
-    }
+    },
+    historyApiFallback: true // Ajout pour le support du routing SPA
   }
 });

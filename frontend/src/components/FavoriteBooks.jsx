@@ -5,34 +5,24 @@ const getToken = () => localStorage.getItem('token');
 
 const FavoriteBooks = () => {
   const [books, setBooks] = useState([]);
-  const [favorites, setFavorites] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Récupère tous les livres et filtre ceux qui sont favoris
+  // Récupère les livres favoris de l'utilisateur
   const fetchFavoriteBooks = async () => {
     setLoading(true);
-    const res = await fetch('/books/filter', {
+    const res = await fetch('/books/favorites', {
       headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     const data = await res.json();
-    // On suppose que l'API ne renvoie pas directement les favoris, donc on filtre côté client
-    // Les favoris sont dans localStorage/favorites ou à synchroniser avec l'utilisateur connecté
-    // Ici, on utilise le même état local que BookList
-    const favs = JSON.parse(localStorage.getItem('favorites') || '{}');
-    setFavorites(favs);
-    setBooks(data.filter(book => favs[book._id]));
+    setBooks(Array.isArray(data) ? data : []);
     setLoading(false);
   };
 
   useEffect(() => { fetchFavoriteBooks(); }, []);
 
-  const handleFavoriteChange = (bookId, isFav) => {
-    setFavorites(favs => {
-      const updated = { ...favs, [bookId]: isFav };
-      localStorage.setItem('favorites', JSON.stringify(updated));
-      setBooks(books => isFav ? books : books.filter(b => b._id !== bookId));
-      return updated;
-    });
+  // Rafraîchit la liste après ajout/suppression d'un favori
+  const handleFavoriteChange = () => {
+    fetchFavoriteBooks();
   };
 
   if (loading) return <div>Chargement...</div>;
@@ -45,7 +35,7 @@ const FavoriteBooks = () => {
         {books.map(book => (
           <BookComponent
             key={book._id}
-            book={{ ...book, isFavorite: favorites[book._id] }}
+            book={{ ...book, isFavorite: true }}
             onFavoriteChange={handleFavoriteChange}
           />
         ))}
