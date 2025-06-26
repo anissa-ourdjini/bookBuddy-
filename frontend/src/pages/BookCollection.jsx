@@ -15,17 +15,20 @@ const BookCollection = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
+      if (!token) throw new Error('Vous devez être connecté.');
       let url = 'http://localhost:5000/books';
       const params = [];
       if (filters.author) params.push(`author=${encodeURIComponent(filters.author)}`);
       if (filters.category) params.push(`category=${encodeURIComponent(filters.category)}`);
       if (filters.status) params.push(`status=${encodeURIComponent(filters.status)}`);
-      if (filters.search) params.push(`search=${encodeURIComponent(filters.search)}`);
       if (params.length) url = `http://localhost:5000/books/filter?${params.join('&')}`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error('Error loading books');
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Erreur lors du chargement des livres');
+      }
       const data = await res.json();
       setBooks(data);
     } catch (err) {
@@ -55,6 +58,7 @@ const BookCollection = () => {
 
   const handleCardClick = (book) => setSelectedBook(book);
   const handleCloseModal = () => setSelectedBook(null);
+
   const handleUpdateStatus = async (e) => {
     const status = e.target.value;
     const token = localStorage.getItem('token');
@@ -66,6 +70,7 @@ const BookCollection = () => {
     fetchBooks();
     setSelectedBook({ ...selectedBook, status });
   };
+
   const handleUpdateProgress = async (e) => {
     e.preventDefault();
     const currentPage = e.target.currentPage.value;
@@ -85,10 +90,10 @@ const BookCollection = () => {
 
   return (
     <div className="container mt-5">
-      <h2>My Book Collection</h2>
+      <h2>Ma collection de livres</h2>
       <AddBookForm onBookAdded={fetchBooks} />
       <BookSearchFilter onFilter={fetchBooks} />
-      {loading && <div>Loading...</div>}
+      {loading && <div>Chargement...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="row">
         {books.map((book) => (
@@ -104,16 +109,15 @@ const BookCollection = () => {
               )}
               <div className="card-body">
                 <h5 className="card-title">{book.title}</h5>
-                <p className="card-text">Author: {book.author}</p>
-                <p className="card-text">Category: {book.category}</p>
-                <p className="card-text">Pages: {book.pages}</p>
-                <p className="card-text">Status: {book.status}</p>
+                <p className="card-text">Auteur : {book.author}</p>
+                <p className="card-text">Catégorie : {book.category}</p>
+                <p className="card-text">Pages : {book.pages}</p>
+                <p className="card-text">Statut : {book.status}</p>
                 <FavoriteButton
                   isFavorite={book.isFavorite}
                   onAdd={() => handleAddFavorite(book._id)}
                   onRemove={() => handleRemoveFavorite(book._id)}
                 />
-                {/* More actions coming soon */}
               </div>
             </div>
           </div>

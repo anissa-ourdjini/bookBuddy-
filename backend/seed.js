@@ -13,10 +13,12 @@ async function seed() {
   console.log('Connected to MongoDB');
 
   // Create a test user
+  const bcrypt = require('bcrypt');
+  const hashedPassword = await bcrypt.hash('testpassword', 10);
   const user = new User({
     username: 'testuser',
     email: 'testuser@example.com',
-    password: 'testpassword',
+    password: hashedPassword,
   });
   await user.save();
   console.log('Test user created');

@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
 
+// Fonction utilitaire pour décoder le token JWT
+function parseJwt(token) {
+  if (!token) return null;
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+}
+
 const AddBookForm = ({ onBookAdded }) => {
   const [form, setForm] = useState({
     title: '',
@@ -24,6 +34,9 @@ const AddBookForm = ({ onBookAdded }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
+      const decoded = parseJwt(token);
+      const userId = decoded?.id;
+      if (!userId) throw new Error('Utilisateur non authentifié.');
       const res = await fetch('http://localhost:5000/books', {
         method: 'POST',
         headers: {
@@ -32,7 +45,8 @@ const AddBookForm = ({ onBookAdded }) => {
         },
         body: JSON.stringify({
           ...form,
-          pages: Number(form.pages)
+          pages: Number(form.pages),
+          userId
         })
       });
       const data = await res.json();
@@ -64,9 +78,9 @@ const AddBookForm = ({ onBookAdded }) => {
         </div>
         <div className="col-md-6">
           <select className="form-select" name="status" value={form.status} onChange={handleChange} required>
-            <option value="to read">To read</option>
-            <option value="reading">Reading</option>
-            <option value="finished">Finished</option>
+            <option value="à lire">À lire</option>
+            <option value="en cours de lecture">En cours de lecture</option>
+            <option value="terminé">Terminé</option>
           </select>
         </div>
         <div className="col-md-6">

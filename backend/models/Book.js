@@ -9,7 +9,7 @@ const bookSchema = new mongoose.Schema({
   category: { type: String, required: true },
   currentPage: { type: Number, default: 0 },
   isFavorite: { type: Boolean, default: false },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Book', bookSchema);
-  // userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

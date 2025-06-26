@@ -6,7 +6,7 @@ exports.addBook = async (req, res) => {
   console.log('coucou')
   
   try {
-    const { title, author, coverImage, status, pages, category } = req.body;
+    const { title, author, coverImage, status, pages, category, userId } = req.body;
     if (!title || !author || !pages || !category) {
       return res.status(400).json({ message: 'Champs requis manquants.' });
     }
@@ -17,10 +17,10 @@ exports.addBook = async (req, res) => {
       status,
       pages,
       category,
-      // userId: 1
+      userId
     });
     await book.save();
-    await User.findByIdAndUpdate(req.user.id, { $push: { books: book._id } });
+    await User.findByIdAndUpdate(userId, { $push: { books: book._id } });
     res.status(201).json(book);
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur.' + err.message });
