@@ -1,60 +1,54 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 
-const Login = () => {
+const API_URL = '/auth/login';
+
+const Login = ({ onLogin, goToRegister }) => {
   const [form, setForm] = useState({ email: '', password: '' });
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate();
-  const { login } = useAuth();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = e => {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setMessage('');
-    const res = await fetch('/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    });
-    const data = await res.json();
-    if (res.ok && data.token) {
-      localStorage.setItem('token', data.token);
-      login();
-      setMessage('Connexion réussie !');
-      navigate('/');
-    } else {
-      setMessage(data.message || 'Identifiants invalides');
+    setError('');
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        onLogin && onLogin();
+      } else {
+        setError(data.message || 'Identifiants invalides');
+      }
+    } catch (e) {
+      setError('Erreur réseau');
     }
+    setLoading(false);
   };
 
   return (
-    <div className="row justify-content-center">
-      <div className="col-12 col-md-6">
-        <div className="card p-4 shadow-sm">
-          <h2 className="mb-4">Connexion</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="form-label">Email</label>
-              <input name="email" type="email" className="form-control" value={form.email} onChange={handleChange} required />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Mot de passe</label>
-              <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} required />
-            </div>
-            <button type="submit" className="btn btn-primary">Se connecter</button>
-          </form>
-          <div className="mt-3 text-center">
-            <span>Pas encore de compte ? </span>
-            <Link to="/register">Créer un compte</Link>
-          </div>
-          {message && <div className="alert alert-info mt-3">{message}</div>}
-        </div>
+    <form onSubmit={handleSubmit} className="p-4 bg-light rounded shadow-sm mx-auto" style={{ maxWidth: 350 }}>
+      <h2 className="mb-4 text-center">Connexion</h2>
+      {error && <div className="alert alert-danger">{error}</div>}
+      <div className="mb-3">
+        <input name="email" type="email" className="form-control" placeholder="Email" value={form.email} onChange={handleChange} required />
       </div>
-    </div>
+      <div className="mb-3">
+        <input name="password" type="password" className="form-control" placeholder="Mot de passe" value={form.password} onChange={handleChange} required />
+      </div>
+      <button type="submit" className="btn btn-primary w-100" disabled={loading}>{loading ? 'Connexion...' : 'Se connecter'}</button>
+      <div className="text-center mt-3">
+        <button type="button" className="btn btn-link p-0" onClick={goToRegister}>Créer un compte</button>
+      </div>
+    </form>
   );
 };
 

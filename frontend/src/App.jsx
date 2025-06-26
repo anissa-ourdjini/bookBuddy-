@@ -1,37 +1,58 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import BookList from './components/BookList';
-import AddBookForm from './components/AddBookForm';
-import FavoriteBooks from './components/FavoriteBooks';
-import Profile from './components/Profile';
-import Rewards from './components/Rewards';
-import Login from './components/Login';
-import Register from './components/Register';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import AddBookForm from './components/AddBookForm.jsx';
+import BookList from './components/BookList.jsx';
+import FavoriteBooks from './components/FavoriteBooks.jsx';
+import Profile from './components/Profile.jsx';
+import Rewards from './components/Rewards.jsx';
+import Home from './components/Home.jsx';
 
-const PrivateRoute = ({ element }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? element : <Navigate to="/login" replace />;
-};
+function App() {
+  const [page, setPage] = useState('books');
+  const [auth, setAuth] = useState(!!localStorage.getItem('token'));
 
-const App = () => (
-  <AuthProvider>
-    <Router>
-      <Navbar />
-      <div className="main-container py-4">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<PrivateRoute element={<BookList />} />} />
-          <Route path="/add" element={<PrivateRoute element={<AddBookForm />} />} />
-          <Route path="/favorites" element={<PrivateRoute element={<FavoriteBooks />} />} />
-          <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
-          <Route path="/rewards" element={<PrivateRoute element={<Rewards />} />} />
-        </Routes>
-      </div>
-    </Router>
-  </AuthProvider>
-);
+  useEffect(() => {
+    setAuth(!!localStorage.getItem('token'));
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setAuth(false);
+    setPage('books');
+  };
+
+  if (!auth) {
+    return <Home />;
+  }
+
+  return (
+    <div className="container mt-4">
+      <ul className="nav nav-tabs mb-4 align-items-center">
+        <li className="nav-item">
+          <button className={`nav-link${page === 'books' ? ' active' : ''}`} onClick={() => setPage('books')}>Ma collection</button>
+        </li>
+        <li className="nav-item">
+          <button className={`nav-link${page === 'favorites' ? ' active' : ''}`} onClick={() => setPage('favorites')}>Mes favoris</button>
+        </li>
+        <li className="nav-item">
+          <button className={`nav-link${page === 'add' ? ' active' : ''}`} onClick={() => setPage('add')}>Ajouter un livre</button>
+        </li>
+        <li className="nav-item">
+          <button className={`nav-link${page === 'profile' ? ' active' : ''}`} onClick={() => setPage('profile')}>Profil</button>
+        </li>
+        <li className="nav-item">
+          <button className={`nav-link${page === 'rewards' ? ' active' : ''}`} onClick={() => setPage('rewards')}>Récompenses</button>
+        </li>
+        <li className="nav-item ms-auto">
+          <button className="btn btn-outline-danger btn-sm ms-2" onClick={handleLogout}>Se déconnecter</button>
+        </li>
+      </ul>
+      {page === 'add' && (<><h2>Ajouter un livre</h2><AddBookForm /></>)}
+      {page === 'books' && <BookList />}
+      {page === 'favorites' && <FavoriteBooks />}
+      {page === 'profile' && <Profile />}
+      {page === 'rewards' && <Rewards />}
+    </div>
+  );
+}
 
 export default App;

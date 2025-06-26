@@ -19,15 +19,15 @@ const Rewards = () => {
     fetchRewards();
   }, []);
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <div className="text-center my-4">Chargement...</div>;
 
   return (
-    <div>
-      <h2>Mes récompenses</h2>
-      {rewards.length === 0 && <div>Aucune récompense débloquée.</div>}
-      <ul>
+    <div className="mx-auto" style={{ maxWidth: 500 }}>
+      <h2 className="mb-4">Mes récompenses</h2>
+      {rewards.length === 0 && <div className="alert alert-info">Aucune récompense débloquée.</div>}
+      <ul className="list-group">
         {rewards.map(r => (
-          <li key={r._id} style={{ marginBottom: 12 }}>
+          <li key={r._id} className="list-group-item mb-2">
             <b>{r.title}</b> <br />
             <span>{r.description}</span>
           </li>

@@ -69,27 +69,36 @@ const BookList = () => {
   // Injection de l'état favori dans chaque BookComponent
   return (
     <div>
-      <h2>Ma collection</h2>
-      {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        <input placeholder="Recherche par titre..." value={search} onChange={e => setSearch(e.target.value)} />
-        <input placeholder="Auteur" value={filters.author} onChange={e => setFilters(f => ({ ...f, author: e.target.value }))} />
-        <input placeholder="Catégorie" value={filters.category} onChange={e => setFilters(f => ({ ...f, category: e.target.value }))} />
-        <select value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}>
-          <option value="">État</option>
-          <option value="à lire">À lire</option>
-          <option value="en cours de lecture">En cours de lecture</option>
-          <option value="terminé">Terminé</option>
-        </select>
+      <h2 className="mb-4">Ma collection</h2>
+      {error && <div className="alert alert-danger mb-3">{error}</div>}
+      <div className="row g-2 mb-3">
+        <div className="col-md-3">
+          <input className="form-control" placeholder="Recherche par titre..." value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+        <div className="col-md-3">
+          <input className="form-control" placeholder="Auteur" value={filters.author} onChange={e => setFilters(f => ({ ...f, author: e.target.value }))} />
+        </div>
+        <div className="col-md-3">
+          <input className="form-control" placeholder="Catégorie" value={filters.category} onChange={e => setFilters(f => ({ ...f, category: e.target.value }))} />
+        </div>
+        <div className="col-md-3">
+          <select className="form-select" value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}>
+            <option value="">État</option>
+            <option value="à lire">À lire</option>
+            <option value="en cours de lecture">En cours de lecture</option>
+            <option value="terminé">Terminé</option>
+          </select>
+        </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+      <div className="row g-3">
         {books.map(book => (
-          <BookComponent
-            key={book._id}
-            book={{ ...book, isFavorite: favorites[book._id] }}
-            onClick={() => setSelectedBook(book)}
-            onFavoriteChange={handleFavoriteChange}
-          />
+          <div className="col-md-4 col-sm-6" key={book._id}>
+            <BookComponent
+              book={{ ...book, isFavorite: favorites[book._id] }}
+              onClick={() => setSelectedBook(book)}
+              onFavoriteChange={handleFavoriteChange}
+            />
+          </div>
         ))}
       </div>
       {selectedBook && (
