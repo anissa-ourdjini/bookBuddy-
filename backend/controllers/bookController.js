@@ -3,6 +3,8 @@ const User = require('../models/User');
 
 // Ajouter un livre
 exports.addBook = async (req, res) => {
+  console.log('coucou')
+  
   try {
     const { title, author, coverImage, status, pages, category } = req.body;
     if (!title || !author || !pages || !category) {
@@ -15,13 +17,13 @@ exports.addBook = async (req, res) => {
       status,
       pages,
       category,
-      userId: req.user.id
+      // userId: 1
     });
     await book.save();
     await User.findByIdAndUpdate(req.user.id, { $push: { books: book._id } });
     res.status(201).json(book);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    res.status(500).json({ message: 'Erreur serveur.' + err.message });
   }
 };
 

@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { addBook, getBooks, getBook, updateBook, updateProgress, addFavorite, removeFavorite, filterBooks } = require('../controllers/bookController');
 const auth = require('../middleware/auth');
-
-router.post('/', auth, addBook);
+router.post('/',  addBook);
 router.get('/', auth, getBooks);
 router.get('/:id', auth, getBook);
 router.put('/:id', auth, updateBook);

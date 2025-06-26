@@ -22,8 +22,8 @@ const Register = () => {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Erreur lors de l'inscription");
-      setSuccess('Inscription réussie ! Vous pouvez vous connecter.');
+      if (!res.ok) throw new Error(data.message || 'Registration failed');
+      setSuccess('Registration successful! You can now log in.');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
       setError(err.message);
@@ -32,10 +32,10 @@ const Register = () => {
 
   return (
     <div className="container mt-5" style={{maxWidth: 400}}>
-      <h2>Inscription</h2>
+      <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Nom d'utilisateur</label>
+          <label className="form-label">Username</label>
           <input type="text" className="form-control" name="username" value={form.username} onChange={handleChange} required />
         </div>
         <div className="mb-3">
@@ -43,12 +43,12 @@ const Register = () => {
           <input type="email" className="form-control" name="email" value={form.email} onChange={handleChange} required />
         </div>
         <div className="mb-3">
-          <label className="form-label">Mot de passe</label>
-          <input type="password" className="form-control" name="password" value={form.password} onChange={handleChange} required minLength={6} />
+          <label className="form-label">Password</label>
+          <input type="password" className="form-control" name="password" value={form.password} onChange={handleChange} required />
         </div>
         {error && <div className="alert alert-danger">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
-        <button type="submit" className="btn btn-primary w-100">S'inscrire</button>
+        <button type="submit" className="btn btn-primary w-100">Register</button>
       </form>
     </div>
   );

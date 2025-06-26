@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./db');
+const bodyParser = require('body-parser')
 
 const app = express();
 
 // Middleware
 app.use(express.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 // Connexion à la base de données
 connectDB();
 
@@ -19,6 +20,7 @@ const booksRoutes = require('./routes/books');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const rewardsRoutes = require('./routes/rewards');
+
 
 app.use('/books', booksRoutes);
 app.use('/auth', authRoutes);

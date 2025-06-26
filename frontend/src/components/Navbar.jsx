@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const navItems = [
-  { to: '/', label: 'Accueil' },
-  { to: '/books', label: 'Ma collection' },
-  { to: '/favorites', label: 'Favoris' },
-  { to: '/profile', label: 'Profil' },
-  { to: '/login', label: 'Connexion' },
-  { to: '/register', label: 'Inscription' },
+  { to: '/', label: 'Home' },
+  { to: '/books', label: 'My Collection' },
+  { to: '/favorites', label: 'Favorites' },
+  { to: '/profile', label: 'Profile' },
+  { to: '/login', label: 'Login' },
+  { to: '/register', label: 'Register' },
 ];
 
 const Navbar = () => {

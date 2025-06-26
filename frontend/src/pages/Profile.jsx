@@ -2,8 +2,8 @@ import React from 'react';
 
 const Profile = () => (
   <div className="container mt-5">
-    <h2>Mon profil</h2>
-    {/* Informations utilisateur et modification du mot de passe à venir */}
+    <h2>My Profile</h2>
+    {/* User information and password change coming soon */}
   </div>
 );
 

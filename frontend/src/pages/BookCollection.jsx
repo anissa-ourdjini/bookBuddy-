@@ -25,7 +25,7 @@ const BookCollection = () => {
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error('Erreur lors du chargement des livres');
+      if (!res.ok) throw new Error('Error loading books');
       const data = await res.json();
       setBooks(data);
     } catch (err) {
@@ -85,10 +85,10 @@ const BookCollection = () => {
 
   return (
     <div className="container mt-5">
-      <h2>Ma collection de livres</h2>
+      <h2>My Book Collection</h2>
       <AddBookForm onBookAdded={fetchBooks} />
       <BookSearchFilter onFilter={fetchBooks} />
-      {loading && <div>Chargement...</div>}
+      {loading && <div>Loading...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="row">
         {books.map((book) => (
@@ -104,16 +104,16 @@ const BookCollection = () => {
               )}
               <div className="card-body">
                 <h5 className="card-title">{book.title}</h5>
-                <p className="card-text">Auteur : {book.author}</p>
-                <p className="card-text">Catégorie : {book.category}</p>
-                <p className="card-text">Pages : {book.pages}</p>
-                <p className="card-text">État : {book.status}</p>
+                <p className="card-text">Author: {book.author}</p>
+                <p className="card-text">Category: {book.category}</p>
+                <p className="card-text">Pages: {book.pages}</p>
+                <p className="card-text">Status: {book.status}</p>
                 <FavoriteButton
                   isFavorite={book.isFavorite}
                   onAdd={() => handleAddFavorite(book._id)}
                   onRemove={() => handleRemoveFavorite(book._id)}
                 />
-                {/* Ajout d'autres actions à venir */}
+                {/* More actions coming soon */}
               </div>
             </div>
           </div>
