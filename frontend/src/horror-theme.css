@@ -60,6 +60,11 @@ input, select, textarea {
   font-family: 'Special Elite', 'Creepster', serif;
 }
 
+input::placeholder, textarea::placeholder {
+  color: #ff2e2e !important;
+  opacity: 1 !important;
+}
+
 .list-group-item {
   background: #222 !important;
   color: #ff2e2e !important;
