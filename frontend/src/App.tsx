@@ -6,14 +6,12 @@ import BookCollection from './pages/BookCollection';
 import Favorites from './pages/Favorites';
 import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
-import AudioIntro from './components/AudioIntro';
 import './App.css';
 import './horror-theme.css';
 
 function App() {
   return (
     <Router>
-      <AudioIntro />
       <Navbar />
       <div className="container-fluid p-0">
         <Routes>
