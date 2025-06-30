@@ -10,6 +10,7 @@ const Favorites = () => {
   const [error, setError] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [confirm, setConfirm] = useState({ show: false, action: null, message: '', bookId: null });
+  const [deletedBooks, setDeletedBooks] = useState([]);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -38,11 +39,10 @@ const Favorites = () => {
   const handleConfirm = async () => {
     if (confirm.action === 'removeBook') {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/books/${confirm.bookId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const removed = books.find(book => book._id === confirm.bookId);
+      setDeletedBooks([...deletedBooks, { ...removed, originalIndex: books.findIndex(book => book._id === confirm.bookId) }]);
       setBooks(books => books.filter(book => book._id !== confirm.bookId));
+      // Appel API différé ou à faire manuellement si suppression définitive souhaitée
     } else if (confirm.action === 'removeFavorite') {
       const token = localStorage.getItem('token');
       await fetch(`http://localhost:5000/books/${confirm.bookId}/favorite`, {
@@ -52,6 +52,14 @@ const Favorites = () => {
       setBooks(books => books.filter(book => book._id !== confirm.bookId));
     }
     setConfirm({ show: false, action: null, message: '', bookId: null });
+  };
+
+  const handleUndo = (book) => {
+    const updated = [...books];
+    updated.splice(book.originalIndex, 0, book);
+    setBooks(updated);
+    setDeletedBooks(deletedBooks.filter(b => b._id !== book._id));
+    // Si besoin, restaurer côté backend ici
   };
 
   return (
@@ -99,6 +107,16 @@ const Favorites = () => {
         onConfirm={handleConfirm}
         message={confirm.message}
       />
+      {deletedBooks.length > 0 && (
+        <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999 }}>
+          {deletedBooks.map((book, idx) => (
+            <div key={book._id + '-' + idx} className="alert alert-warning d-flex align-items-center mb-2" style={{ minWidth: 250 }}>
+              <span className="me-auto">Livre supprimé : <b>{book.title}</b></span>
+              <button className="btn btn-sm btn-success ms-2" onClick={() => handleUndo(book)}>Undo</button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

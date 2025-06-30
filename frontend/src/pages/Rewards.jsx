@@ -23,6 +23,7 @@ const Rewards = () => {
   const [newReward, setNewReward] = React.useState({ count: '', img: '', label: '' });
   const navigate = useNavigate();
   const [checkingAuth, setCheckingAuth] = React.useState(true);
+  const [deletedRewards, setDeletedRewards] = React.useState([]);
 
   React.useEffect(() => {
     const token = localStorage.getItem('token');
@@ -55,10 +56,19 @@ const Rewards = () => {
   };
 
   const confirmRemove = () => {
+    const removed = rewardsList[removeIndex];
+    setDeletedRewards([...deletedRewards, { ...removed, originalIndex: removeIndex }]);
     const updated = rewardsList.filter((_, i) => i !== removeIndex);
     setRewardsList(updated);
     setShowConfirm(false);
     setRemoveIndex(null);
+  };
+
+  const handleUndo = (reward) => {
+    const updated = [...rewardsList];
+    updated.splice(reward.originalIndex, 0, reward);
+    setRewardsList(updated);
+    setDeletedRewards(deletedRewards.filter(r => r !== reward));
   };
 
   const handleAddReward = (e) => {
@@ -132,6 +142,16 @@ const Rewards = () => {
         onConfirm={confirmRemove}
         message="Are you sure to remove this award?"
       />
+      {deletedRewards.length > 0 && (
+        <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999 }}>
+          {deletedRewards.map((reward, idx) => (
+            <div key={reward.count + '-' + idx} className="alert alert-warning d-flex align-items-center mb-2" style={{ minWidth: 250 }}>
+              <span className="me-auto">Reward supprimée : <b>{reward.label}</b></span>
+              <button className="btn btn-sm btn-success ms-2" onClick={() => handleUndo(reward)}>Undo</button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
