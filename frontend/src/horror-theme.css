@@ -1,5 +1,5 @@
 body, .navbar, .card, .modal-content {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2c001e 100%) !important;
+  background: black;
   color: #ff2e2e !important;
 }
 
