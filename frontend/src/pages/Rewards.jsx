@@ -4,6 +4,7 @@ import M from '../assets/M.jpg';
 import rl from '../assets/rl.png';
 import mh from '../assets/mh.jpg';
 import ConfirmModal from '../components/ConfirmModal';
+import { useNavigate } from 'react-router-dom';
 
 const rewards = [
   { count: 50, img: cw, label: '50 books read' },
@@ -20,6 +21,14 @@ const Rewards = () => {
   const [rewardsList, setRewardsList] = React.useState(rewards);
   const booksRead = 300; // À remplacer par la vraie valeur utilisateur
   const [newReward, setNewReward] = React.useState({ count: '', img: '', label: '' });
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handleEdit = (idx) => {
     setEditIndex(idx);
@@ -54,6 +63,11 @@ const Rewards = () => {
     if (!newReward.count || !newReward.label || !newReward.img) return;
     setRewardsList([...rewardsList, { ...newReward, count: Number(newReward.count) }]);
     setNewReward({ count: '', img: '', label: '' });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
