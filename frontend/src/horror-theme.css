@@ -108,3 +108,34 @@ body {
 .container.mt-5 {
   margin-top: 0.5rem !important;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:active {
+  -webkit-text-fill-color: #ff2e2e !important;
+  box-shadow: 0 0 0 100px #222 inset !important;
+  background: transparent !important;
+  color: #ff2e2e !important;
+  border: 1px solid #ff2e2e !important;
+  font-family: 'Special Elite', 'Creepster', serif;
+  pointer-events: auto !important;
+  caret-color: #ff2e2e !important;
+}
+
+input:-moz-autofill,
+select:-moz-autofill,
+textarea:-moz-autofill {
+  box-shadow: 0 0 0 1000px #222 inset !important;
+  color: #ff2e2e !important;
+  border: 1px solid #ff2e2e !important;
+  font-family: 'Special Elite', 'Creepster', serif;
+}

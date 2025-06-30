@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Fonction utilitaire pour décoder le token JWT
 function parseJwt(token) {
@@ -15,19 +15,24 @@ const AddBookForm = ({ onBookAdded }) => {
     title: '',
     author: '',
     coverImage: '',
-    status: 'to read',
+    status: 'à lire',
     pages: '',
-    category: ''
+    category: '',
+    isFavorite: false
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({
+      ...form,
+      [name]: type === 'checkbox' ? checked : value
+    });
   };
 
-  const handleSubmit = async (e) => {
+  const handleAdd = async (e, favorite = false) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -46,13 +51,14 @@ const AddBookForm = ({ onBookAdded }) => {
         body: JSON.stringify({
           ...form,
           pages: Number(form.pages),
-          userId
+          userId,
+          isFavorite: favorite
         })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Error while adding');
       setSuccess('Book added!');
-      setForm({ title: '', author: '', coverImage: '', status: 'to read', pages: '', category: '' });
+      setForm({ title: '', author: '', coverImage: '', status: 'à lire', pages: '', category: '', isFavorite: false });
       if (onBookAdded) onBookAdded();
     } catch (err) {
       setError(err.message);
@@ -61,8 +67,15 @@ const AddBookForm = ({ onBookAdded }) => {
     }
   };
 
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(''), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   return (
-    <form onSubmit={handleSubmit} className="mb-4">
+    <form onSubmit={e => handleAdd(e, form.isFavorite)} className="mb-4">
       <div className="row g-2">
         <div className="col-md-6">
           <input type="text" className="form-control" name="title" placeholder="Title" value={form.title} onChange={handleChange} required />
@@ -89,7 +102,10 @@ const AddBookForm = ({ onBookAdded }) => {
       </div>
       {error && <div className="alert alert-danger mt-2">{error}</div>}
       {success && <div className="alert alert-success mt-2">{success}</div>}
-      <button type="submit" className="btn btn-success mt-3" disabled={loading}>{loading ? 'Adding...' : 'Add Book'}</button>
+      <div className="d-flex gap-2 mt-3">
+        <button type="button" className="btn btn-success" disabled={loading} onClick={e => handleAdd(e, false)}>{loading ? 'Adding...' : 'Add Book'}</button>
+        <button type="button" className="btn btn-success" disabled={loading} onClick={e => handleAdd(e, true)}>{loading ? 'Adding...' : 'Add to favorites'}</button>
+      </div>
     </form>
   );
 };

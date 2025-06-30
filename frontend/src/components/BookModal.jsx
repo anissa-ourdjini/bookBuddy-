@@ -1,42 +1,92 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const BookModal = ({ book, onClose, onUpdateStatus, onUpdateProgress }) => {
+  const [form, setForm] = useState({
+    title: book.title,
+    author: book.author,
+    category: book.category,
+    pages: book.pages,
+    coverImage: book.coverImage || '',
+    status: book.status
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/books/${book._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ ...form, pages: Number(form.pages) })
+      });
+      if (!res.ok) throw new Error('Error updating book');
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!book) return null;
   return (
     <div className="modal show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">{book.title}</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+            <h5 className="modal-title">Edit Book</h5>
+            <button type="button" className="btn-close" onClick={onClose} style={{ filter: 'invert(24%) sepia(99%) saturate(7486%) hue-rotate(357deg) brightness(102%) contrast(119%)', opacity: 1 }} aria-label="Close"></button>
           </div>
-          <div className="modal-body">
-            {book.coverImage && <img src={book.coverImage} alt={book.title} className="img-fluid mb-3" style={{maxHeight:200}} />}
-            <p><strong>Auteur :</strong> {book.author}</p>
-            <p><strong>Catégorie :</strong> {book.category}</p>
-            <p><strong>Pages :</strong> {book.pages}</p>
-            <p><strong>État :</strong> {book.status}</p>
-            {/* Gestion de la progression */}
-            {book.status === 'en cours de lecture' && (
-              <form onSubmit={onUpdateProgress} className="mb-2">
-                <label className="form-label">Dernière page lue :</label>
-                <input type="number" name="currentPage" defaultValue={book.currentPage || 0} min={0} max={book.pages} className="form-control mb-2" />
-                <button type="submit" className="btn btn-info btn-sm">Mettre à jour</button>
-                <div className="progress mt-2">
-                  <div className="progress-bar" role="progressbar" style={{width: `${((book.currentPage||0)/book.pages)*100}%`}} aria-valuenow={book.currentPage||0} aria-valuemin="0" aria-valuemax={book.pages}></div>
-                </div>
-              </form>
-            )}
-            {/* Changement d'état */}
-            <div className="mb-2">
-              <label className="form-label">Changer l'état :</label>
-              <select className="form-select" value={book.status} onChange={onUpdateStatus}>
-                <option value="à lire">À lire</option>
-                <option value="en cours de lecture">En cours de lecture</option>
-                <option value="terminé">Terminé</option>
-              </select>
+          <form onSubmit={handleSave}>
+            <div className="modal-body">
+              {error && <div className="alert alert-danger">{error}</div>}
+              <div className="mb-2">
+                <label className="form-label">Title</label>
+                <input type="text" className="form-control" name="title" value={form.title} onChange={handleChange} required />
+              </div>
+              <div className="mb-2">
+                <label className="form-label">Author</label>
+                <input type="text" className="form-control" name="author" value={form.author} onChange={handleChange} required />
+              </div>
+              <div className="mb-2">
+                <label className="form-label">Category</label>
+                <input type="text" className="form-control" name="category" value={form.category} onChange={handleChange} required />
+              </div>
+              <div className="mb-2">
+                <label className="form-label">Pages</label>
+                <input type="number" className="form-control" name="pages" value={form.pages} onChange={handleChange} required min={1} />
+              </div>
+              <div className="mb-2">
+                <label className="form-label">Cover image URL</label>
+                <input type="text" className="form-control" name="coverImage" value={form.coverImage} onChange={handleChange} />
+              </div>
+              <div className="mb-2">
+                <label className="form-label">Status</label>
+                <select className="form-select" name="status" value={form.status} onChange={handleChange} required>
+                  <option value="à lire">À lire</option>
+                  <option value="en cours de lecture">En cours de lecture</option>
+                  <option value="terminé">Terminé</option>
+                </select>
+              </div>
             </div>
-          </div>
+            <div className="modal-footer">
+              <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
+              <button type="button" className="btn btn-secondary" onClick={onClose} style={{ fontFamily: 'Special Elite, Creepster, serif' }}>Cancel</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

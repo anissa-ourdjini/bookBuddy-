@@ -8,6 +8,7 @@ const navItems = [
   { to: '/profile', label: 'Profile' },
   { to: '/login', label: 'Login' },
   { to: '/register', label: 'Register' },
+  { to: '/rewards', label: 'Rewards' },
 ];
 
 const Navbar = () => {
@@ -24,7 +25,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid">
         {isLoggedIn && (
-          <button className="btn btn-danger me-3" onClick={handleLogout}>Déconnexion</button>
+          <button className="btn btn-primary me-3" onClick={handleLogout}>Sign out</button>
         )}
         <Link className="navbar-brand" to="/">BookBuddy</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

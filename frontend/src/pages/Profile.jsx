@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import apiFetch from '../utils/apiFetch';
+import ConfirmModal from '../components/ConfirmModal';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -8,6 +9,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -55,6 +57,16 @@ const Profile = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const token = localStorage.getItem('token');
+    await apiFetch(`http://localhost:5000/users/${user._id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
+
   if (loading) return <div className="container mt-5">Chargement...</div>;
   if (error) return <div className="container mt-5"><div className="alert alert-danger">{error}</div></div>;
   if (!user) return null;
@@ -73,16 +85,23 @@ const Profile = () => {
             <label className="form-label">Email</label>
             <input type="email" className="form-control" name="email" value={form.email} onChange={handleChange} required />
           </div>
-          <button type="submit" className="btn btn-primary me-2">Enregistrer</button>
-          <button type="button" className="btn btn-secondary" onClick={handleCancel}>Annuler</button>
+          <button type="submit" className="btn btn-primary me-2">Save</button>
+          <button type="button" className="btn btn-secondary" onClick={handleCancel} style={{ fontFamily: 'Special Elite, Creepster, serif' }}>Cancel</button>
         </form>
       ) : (
         <div>
           <p><strong>Username:</strong> {user.username}</p>
           <p><strong>Email:</strong> {user.email}</p>
-          <button className="btn btn-outline-primary" onClick={handleEdit}>Modifier</button>
+          <button className="btn btn-primary" onClick={handleEdit}>Edit</button>
+          <button className="btn btn-primary ms-2" onClick={() => setShowDelete(true)}>Delete account</button>
         </div>
       )}
+      <ConfirmModal
+        show={showDelete}
+        onClose={() => setShowDelete(false)}
+        onConfirm={handleDeleteAccount}
+        message="Are you sure to delete this account?"
+      />
     </div>
   );
 };

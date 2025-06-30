@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
   books: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }],
   rewards: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reward' }],
   favoris: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }],
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

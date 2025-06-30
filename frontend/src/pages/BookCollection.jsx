@@ -3,12 +3,14 @@ import AddBookForm from '../components/AddBookForm';
 import BookSearchFilter from '../components/BookSearchFilter';
 import FavoriteButton from '../components/FavoriteButton';
 import BookModal from '../components/BookModal';
+import ConfirmModal from '../components/ConfirmModal';
 
 const BookCollection = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
+  const [confirm, setConfirm] = useState({ show: false, action: null, message: '', bookId: null });
 
   const fetchBooks = async (filters = {}) => {
     setLoading(true);
@@ -48,12 +50,26 @@ const BookCollection = () => {
   };
 
   const handleRemoveFavorite = async (bookId) => {
-    const token = localStorage.getItem('token');
-    await fetch(`http://localhost:5000/books/${bookId}/favorite`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    fetchBooks();
+    setConfirm({ show: true, action: 'removeFavorite', message: 'Are you sure you want to remove the book from favorites?', bookId });
+  };
+
+  const handleConfirm = async () => {
+    if (confirm.action === 'removeBook') {
+      const token = localStorage.getItem('token');
+      await fetch(`http://localhost:5000/books/${confirm.bookId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchBooks();
+    } else if (confirm.action === 'removeFavorite') {
+      const token = localStorage.getItem('token');
+      await fetch(`http://localhost:5000/books/${confirm.bookId}/favorite`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchBooks();
+    }
+    setConfirm({ show: false, action: null, message: '', bookId: null });
   };
 
   const handleCardClick = (book) => setSelectedBook(book);
@@ -84,6 +100,10 @@ const BookCollection = () => {
     setSelectedBook({ ...selectedBook, currentPage });
   };
 
+  const handleRemoveBook = async (bookId) => {
+    setConfirm({ show: true, action: 'removeBook', message: 'Are you sure you want to remove this book?', bookId });
+  };
+
   useEffect(() => {
     fetchBooks();
   }, []);
@@ -98,26 +118,32 @@ const BookCollection = () => {
       <div className="row">
         {books.map((book) => (
           <div className="col-md-4 mb-4" key={book._id}>
-            <div className="card h-100" style={{ cursor: 'pointer' }} onClick={() => handleCardClick(book)}>
-              {book.coverImage && (
-                <img
-                  src={book.coverImage}
-                  className="card-img-top"
-                  alt={book.title}
-                  style={{ height: 200, objectFit: 'cover' }}
-                />
-              )}
-              <div className="card-body">
-                <h5 className="card-title">{book.title}</h5>
-                <p className="card-text">Auteur : {book.author}</p>
-                <p className="card-text">Catégorie : {book.category}</p>
-                <p className="card-text">Pages : {book.pages}</p>
-                <p className="card-text">Statut : {book.status}</p>
+            <div className="card h-100" style={{ position: 'relative' }}>
+              <div style={{ cursor: 'pointer' }} onClick={() => setSelectedBook(book)}>
+                {book.coverImage && (
+                  <img
+                    src={book.coverImage}
+                    className="card-img-top"
+                    alt={book.title}
+                    style={{ height: 200, objectFit: 'cover' }}
+                  />
+                )}
+                <div className="card-body">
+                  <h5 className="card-title">{book.title}</h5>
+                  <p className="card-text">Auteur : {book.author}</p>
+                  <p className="card-text">Catégorie : {book.category}</p>
+                  <p className="card-text">Pages : {book.pages}</p>
+                  <p className="card-text">Statut : {book.status}</p>
+                </div>
+              </div>
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', gap: 8, position: 'absolute', bottom: 10, left: 0, zIndex: 2, paddingRight: 10 }}>
                 <FavoriteButton
                   isFavorite={book.isFavorite}
                   onAdd={() => handleAddFavorite(book._id)}
                   onRemove={() => handleRemoveFavorite(book._id)}
                 />
+                <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); setSelectedBook(book); }} title="Edit">Edit</button>
+                <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); handleRemoveBook(book._id); }} title="Remove book">Remove book</button>
               </div>
             </div>
           </div>
@@ -131,6 +157,12 @@ const BookCollection = () => {
           onUpdateProgress={handleUpdateProgress}
         />
       )}
+      <ConfirmModal
+        show={confirm.show}
+        onClose={() => setConfirm({ show: false, action: null, message: '', bookId: null })}
+        onConfirm={handleConfirm}
+        message={confirm.message}
+      />
     </div>
   );
 };
