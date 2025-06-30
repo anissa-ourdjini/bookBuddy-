@@ -22,11 +22,14 @@ const Rewards = () => {
   const booksRead = 300; // À remplacer par la vraie valeur utilisateur
   const [newReward, setNewReward] = React.useState({ count: '', img: '', label: '' });
   const navigate = useNavigate();
+  const [checkingAuth, setCheckingAuth] = React.useState(true);
 
   React.useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
+    } else {
+      setCheckingAuth(false);
     }
   }, [navigate]);
 
@@ -69,6 +72,8 @@ const Rewards = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
+
+  if (checkingAuth) return null;
 
   return (
     <div className="container mt-5 text-center">
