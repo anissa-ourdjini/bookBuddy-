@@ -11,6 +11,7 @@ const Favorites = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [confirm, setConfirm] = useState({ show: false, action: null, message: '', bookId: null });
   const [deletedBooks, setDeletedBooks] = useState([]);
+  const [confirmRemoveDeleted, setConfirmRemoveDeleted] = useState({ show: false, book: null });
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -62,6 +63,23 @@ const Favorites = () => {
     // Si besoin, restaurer côté backend ici
   };
 
+  const handleRemoveDeleted = (book) => {
+    setConfirmRemoveDeleted({ show: true, book });
+  };
+
+  const confirmRemoveDeletedBook = async () => {
+    // Suppression côté backend
+    const token = localStorage.getItem('token');
+    await fetch(`http://localhost:5000/books/${confirmRemoveDeleted.book._id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setDeletedBooks(deletedBooks.filter(b => b._id !== confirmRemoveDeleted.book._id));
+    setConfirmRemoveDeleted({ show: false, book: null });
+    // Rafraîchir la liste des favoris
+    fetchFavorites();
+  };
+
   return (
     <div className="container mt-5">
       <h2>My Favorites</h2>
@@ -72,7 +90,7 @@ const Favorites = () => {
           <div className="col-md-4 mb-4" key={book._id}>
             <div className="card h-100" style={{ minWidth: 320, maxWidth: 400, margin: '0 auto', wordBreak: 'normal', writingMode: 'horizontal-tb', position: 'relative', paddingBottom: 60 }}>
               {book.coverImage && (
-                <img src={book.coverImage} className="card-img-top" alt={book.title} style={{ height: 200, objectFit: 'cover' }} />
+                <img src={book.coverImage} className="card-img-top" alt={book.title} style={{ height: 200, width: '100%', objectFit: 'contain', background: '#222' }} />
               )}
               <div className="card-body" style={{ wordBreak: 'normal', writingMode: 'horizontal-tb' }}>
                 <h5 className="card-title" style={{ wordBreak: 'normal', writingMode: 'horizontal-tb' }}>{book.title}</h5>
@@ -113,12 +131,19 @@ const Favorites = () => {
             <div key={book._id + '-' + idx} className="alert alert-warning d-flex align-items-center mb-2" style={{ minWidth: 250 }}>
               <span className="me-auto">Livre supprimé : <b>{book.title}</b></span>
               <button className="btn btn-sm btn-success ms-2" onClick={() => handleUndo(book)}>Undo</button>
+              <button className="btn btn-sm btn-success ms-2" onClick={() => handleRemoveDeleted(book)}>Remove</button>
             </div>
           ))}
         </div>
       )}
+      <ConfirmModal
+        show={confirmRemoveDeleted.show}
+        onClose={() => setConfirmRemoveDeleted({ show: false, book: null })}
+        onConfirm={confirmRemoveDeletedBook}
+        message={confirmRemoveDeleted.book ? `Are you sure you want to remove definitely this book "${confirmRemoveDeleted.book.title}"?` : ''}
+      />
     </div>
   );
 };
 
-export { Favorites as default };
+export default Favorites;

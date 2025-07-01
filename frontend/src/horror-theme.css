@@ -53,6 +53,10 @@ body, .navbar, .card, .modal-content {
   background-color: #b30000 !important;
 }
 
+.btn-secondary {
+  font-family: 'Special Elite', 'Creepster', serif !important;
+}
+
 input, select, textarea {
   background: #222 !important;
   color: #ff2e2e !important;

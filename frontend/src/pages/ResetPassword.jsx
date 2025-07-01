@@ -59,4 +59,4 @@ const ResetPassword = () => {
   );
 };
 
-export { ResetPassword as default }; 
+export default ResetPassword; 

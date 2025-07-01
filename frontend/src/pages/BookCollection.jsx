@@ -12,6 +12,7 @@ const BookCollection = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [confirm, setConfirm] = useState({ show: false, action: null, message: '', bookId: null });
   const [deletedBooks, setDeletedBooks] = useState([]);
+  const [confirmRemoveDeleted, setConfirmRemoveDeleted] = useState({ show: false, book: null });
 
   const fetchBooks = async (filters = {}) => {
     setLoading(true);
@@ -56,11 +57,9 @@ const BookCollection = () => {
 
   const handleConfirm = async () => {
     if (confirm.action === 'removeBook') {
-      const token = localStorage.getItem('token');
       const removed = books.find(book => book._id === confirm.bookId);
       setDeletedBooks([...deletedBooks, { ...removed, originalIndex: books.findIndex(book => book._id === confirm.bookId) }]);
       setBooks(books => books.filter(book => book._id !== confirm.bookId));
-      // Appel API différé ou à faire manuellement si suppression définitive souhaitée
     } else if (confirm.action === 'removeFavorite') {
       const token = localStorage.getItem('token');
       await fetch(`http://localhost:5000/books/${confirm.bookId}/favorite`, {
@@ -112,13 +111,29 @@ const BookCollection = () => {
     setConfirm({ show: true, action: 'removeBook', message: 'Are you sure you want to remove this book?', bookId });
   };
 
+  const handleRemoveDeleted = (book) => {
+    setConfirmRemoveDeleted({ show: true, book });
+  };
+
+  const confirmRemoveDeletedBook = async () => {
+    // Suppression côté backend uniquement lors de la suppression définitive
+    const token = localStorage.getItem('token');
+    await fetch(`http://localhost:5000/books/${confirmRemoveDeleted.book._id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setDeletedBooks(deletedBooks.filter(b => b._id !== confirmRemoveDeleted.book._id));
+    setConfirmRemoveDeleted({ show: false, book: null });
+    fetchBooks();
+  };
+
   useEffect(() => {
     fetchBooks();
   }, []);
 
   return (
     <div className="container mt-5">
-      <h2>Ma collection de livres</h2>
+      <h2>My Collection</h2>
       <AddBookForm onBookAdded={fetchBooks} />
       <BookSearchFilter onFilter={fetchBooks} />
       {loading && <div>Chargement...</div>}
@@ -133,7 +148,7 @@ const BookCollection = () => {
                     src={book.coverImage}
                     className="card-img-top"
                     alt={book.title}
-                    style={{ height: 200, objectFit: 'cover' }}
+                    style={{ height: 200, width: '100%', objectFit: 'contain', background: '#222' }}
                   />
                 )}
                 <div className="card-body">
@@ -177,10 +192,17 @@ const BookCollection = () => {
             <div key={book._id + '-' + idx} className="alert alert-warning d-flex align-items-center mb-2" style={{ minWidth: 250 }}>
               <span className="me-auto">Livre supprimé : <b>{book.title}</b></span>
               <button className="btn btn-sm btn-success ms-2" onClick={() => handleUndo(book)}>Undo</button>
+              <button className="btn btn-sm btn-success ms-2" onClick={() => handleRemoveDeleted(book)}>Remove</button>
             </div>
           ))}
         </div>
       )}
+      <ConfirmModal
+        show={confirmRemoveDeleted.show}
+        onClose={() => setConfirmRemoveDeleted({ show: false, book: null })}
+        onConfirm={confirmRemoveDeletedBook}
+        message={confirmRemoveDeleted.book ? `Are you sure you want to remove definitely this book "${confirmRemoveDeleted.book.title}"?` : ''}
+      />
     </div>
   );
 };
