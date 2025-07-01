@@ -7,6 +7,7 @@ import Favorites from './pages/Favorites';
 import Profile from './pages/Profile';
 import ResetPassword from './pages/ResetPassword';
 import Rewards from './pages/Rewards';
+import AddBook from './pages/AddBook';
 import Navbar from './components/Navbar';
 import './App.css';
 import './horror-theme.css';
@@ -25,6 +26,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/rewards" element={<Rewards />} />
+          <Route path="/add-book" element={<AddBook />} />
         </Routes>
       </div>
     </Router>

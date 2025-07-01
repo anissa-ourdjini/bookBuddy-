@@ -14,7 +14,7 @@ const BookModal = ({ book, onClose, onUpdateStatus, onUpdateProgress }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm({ ...form, [name]: name === 'pages' ? Number(value) : value });
   };
 
   const handleSave = async (e) => {
