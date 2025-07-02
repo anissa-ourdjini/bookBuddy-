@@ -103,11 +103,6 @@ const Rewards = () => {
             <div className="card h-100 p-2 d-flex flex-column justify-content-between" style={{ border: booksRead >= r.count ? '2px solid #ff2e2e' : '2px solid #888', background: booksRead >= r.count ? '#181818' : '#333' }}>
               <img src={r.img} alt={r.label} className="img-fluid mb-2" style={{ maxHeight: 180, objectFit: 'contain', borderRadius: 8, boxShadow: booksRead >= r.count ? '0 0 16px #ff2e2e' : 'none' }} />
               <h5 style={{ color: booksRead >= r.count ? '#ff2e2e' : '#aaa', fontFamily: 'Special Elite, Creepster, serif' }}>{r.label}</h5>
-              {r.count === 300 && booksRead >= 300 && (
-                <div className="mt-2" style={{ color: '#ff2e2e', fontWeight: 'bold', fontSize: '1.2em' }}>
-                  Maître de l'horreur
-                </div>
-              )}
               <div className="d-flex justify-content-center gap-2 mt-3 mt-auto">
                 <button className="btn btn-primary btn-sm" onClick={() => handleEdit(idx)}>Edit</button>
                 <button className="btn btn-primary btn-sm" onClick={() => handleRemove(idx)}>Remove rewards</button>
