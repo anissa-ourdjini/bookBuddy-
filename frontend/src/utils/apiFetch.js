@@ -1,3 +1,5 @@
+const API_BASE = 'http://localhost:5000';
+
 export default async function apiFetch(url, options = {}) {
   const token = localStorage.getItem('token');
   const headers = {
@@ -5,7 +7,8 @@ export default async function apiFetch(url, options = {}) {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     'Content-Type': 'application/json',
   };
-  const res = await fetch(url, { ...options, headers });
+  const fullUrl = url.startsWith('http') ? url : API_BASE + url;
+  const res = await fetch(fullUrl, { ...options, headers });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || 'Erreur API');
   return data;
