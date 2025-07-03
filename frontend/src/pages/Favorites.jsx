@@ -3,6 +3,7 @@ import apiFetch from '../utils/apiFetch';
 import FavoriteButton from '../components/FavoriteButton';
 import BookModal from '../components/BookModal';
 import ConfirmModal from '../components/ConfirmModal';
+import { useDeletedBooks } from '../components/DeletedBooksContext';
 
 const Favorites = () => {
   const [books, setBooks] = useState([]);
@@ -10,6 +11,7 @@ const Favorites = () => {
   const [error, setError] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [confirm, setConfirm] = useState({ show: false, action: null, message: '', bookId: null });
+  const { addDeletedBook } = useDeletedBooks();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -37,12 +39,10 @@ const Favorites = () => {
 
   const handleConfirm = async () => {
     if (confirm.action === 'removeBook') {
-      const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/books/${confirm.bookId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const removed = books.find(book => book._id === confirm.bookId);
+      addDeletedBook(removed);
       setBooks(books => books.filter(book => book._id !== confirm.bookId));
+      // Appel API différé ou à faire manuellement si suppression définitive souhaitée
     } else if (confirm.action === 'removeFavorite') {
       const token = localStorage.getItem('token');
       await fetch(`http://localhost:5000/books/${confirm.bookId}/favorite`, {
@@ -64,7 +64,7 @@ const Favorites = () => {
           <div className="col-md-4 mb-4" key={book._id}>
             <div className="card h-100" style={{ minWidth: 320, maxWidth: 400, margin: '0 auto', wordBreak: 'normal', writingMode: 'horizontal-tb', position: 'relative', paddingBottom: 60 }}>
               {book.coverImage && (
-                <img src={book.coverImage} className="card-img-top" alt={book.title} style={{ height: 200, objectFit: 'cover' }} />
+                <img src={book.coverImage} className="card-img-top" alt={book.title} style={{ height: 200, width: '100%', objectFit: 'contain', background: '#222' }} />
               )}
               <div className="card-body" style={{ wordBreak: 'normal', writingMode: 'horizontal-tb' }}>
                 <h5 className="card-title" style={{ wordBreak: 'normal', writingMode: 'horizontal-tb' }}>{book.title}</h5>
@@ -103,4 +103,4 @@ const Favorites = () => {
   );
 };
 
-export { Favorites as default };
+export default Favorites;

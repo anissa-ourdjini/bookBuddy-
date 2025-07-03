@@ -28,7 +28,7 @@ const AddBookForm = ({ onBookAdded }) => {
     const { name, value, type, checked } = e.target;
     setForm({
       ...form,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: name === 'pages' ? Number(value) : (type === 'checkbox' ? checked : value)
     });
   };
 

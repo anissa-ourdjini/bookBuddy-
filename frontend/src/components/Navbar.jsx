@@ -5,6 +5,8 @@ const navItems = [
   { to: '/', label: 'Home' },
   { to: '/books', label: 'My Collection' },
   { to: '/favorites', label: 'Favorites' },
+  { to: '/add-book', label: 'Add Book' },
+  { to: '/deleted-books', label: 'Deleted Books' },
   { to: '/profile', label: 'Profile' },
   { to: '/login', label: 'Login' },
   { to: '/register', label: 'Register' },

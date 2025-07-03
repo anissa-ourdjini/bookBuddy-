@@ -115,14 +115,18 @@ exports.removeFavorite = async (req, res) => {
 // Filtrer les livres
 exports.filterBooks = async (req, res) => {
   try {
-    const { author, category, status } = req.query;
+    console.log('QUERY:', req.query);
+    console.log('USER:', req.user);
+    const { author, category, status, search } = req.query;
     const filter = { userId: req.user.id };
     if (author) filter.author = author;
     if (category) filter.category = category;
     if (status) filter.status = status;
+    if (search) filter.title = new RegExp('^' + search + '$', 'i');
     const books = await Book.find(filter);
     res.json(books);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('FILTER ERROR:', err);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };

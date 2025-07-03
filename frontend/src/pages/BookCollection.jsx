@@ -4,6 +4,7 @@ import BookSearchFilter from '../components/BookSearchFilter';
 import FavoriteButton from '../components/FavoriteButton';
 import BookModal from '../components/BookModal';
 import ConfirmModal from '../components/ConfirmModal';
+import { useDeletedBooks } from '../components/DeletedBooksContext';
 
 const BookCollection = () => {
   const [books, setBooks] = useState([]);
@@ -11,6 +12,7 @@ const BookCollection = () => {
   const [error, setError] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [confirm, setConfirm] = useState({ show: false, action: null, message: '', bookId: null });
+  const { addDeletedBook } = useDeletedBooks();
 
   const fetchBooks = async (filters = {}) => {
     setLoading(true);
@@ -20,6 +22,7 @@ const BookCollection = () => {
       if (!token) throw new Error('Vous devez être connecté.');
       let url = 'http://localhost:5000/books';
       const params = [];
+      if (filters.search) params.push(`search=${encodeURIComponent(filters.search)}`);
       if (filters.author) params.push(`author=${encodeURIComponent(filters.author)}`);
       if (filters.category) params.push(`category=${encodeURIComponent(filters.category)}`);
       if (filters.status) params.push(`status=${encodeURIComponent(filters.status)}`);
@@ -55,19 +58,16 @@ const BookCollection = () => {
 
   const handleConfirm = async () => {
     if (confirm.action === 'removeBook') {
-      const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/books/${confirm.bookId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchBooks();
+      const removed = books.find(book => book._id === confirm.bookId);
+      addDeletedBook(removed);
+      setBooks(books => books.filter(book => book._id !== confirm.bookId));
     } else if (confirm.action === 'removeFavorite') {
       const token = localStorage.getItem('token');
       await fetch(`http://localhost:5000/books/${confirm.bookId}/favorite`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
-      fetchBooks();
+      setBooks(books => books.filter(book => book._id !== confirm.bookId));
     }
     setConfirm({ show: false, action: null, message: '', bookId: null });
   };
@@ -104,50 +104,75 @@ const BookCollection = () => {
     setConfirm({ show: true, action: 'removeBook', message: 'Are you sure you want to remove this book?', bookId });
   };
 
+  const handleFilter = (filters) => {
+    const statusMap = {
+      'to read': 'à lire',
+      'reading': 'en cours de lecture',
+      'finished': 'terminé'
+    };
+    const backendStatus = statusMap[filters.status] || filters.status;
+    fetchBooks({ ...filters, status: backendStatus });
+  };
+
   useEffect(() => {
     fetchBooks();
   }, []);
 
   return (
     <div className="container mt-5">
-      <h2>Ma collection de livres</h2>
-      <AddBookForm onBookAdded={fetchBooks} />
-      <BookSearchFilter onFilter={fetchBooks} />
+      <h2>My Collection</h2>
+      <BookSearchFilter onFilter={handleFilter} />
       {loading && <div>Chargement...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="row">
-        {books.map((book) => (
-          <div className="col-md-4 mb-4" key={book._id}>
-            <div className="card h-100" style={{ position: 'relative' }}>
-              <div style={{ cursor: 'pointer' }} onClick={() => setSelectedBook(book)}>
-                {book.coverImage && (
-                  <img
-                    src={book.coverImage}
-                    className="card-img-top"
-                    alt={book.title}
-                    style={{ height: 200, objectFit: 'cover' }}
+        {books.map((book) => {
+          const {
+            coverImage = '',
+            title = 'No title',
+            author = 'Unknown',
+            category = 'Unknown',
+            pages = 'N/A',
+            status = 'N/A',
+            isFavorite = false,
+            _id
+          } = book || {};
+          return (
+            <div className="col-md-4 mb-4" key={_id}>
+              <div className="card h-100 d-flex flex-column justify-content-between" style={{ border: '2px solid #ff2e2e', background: '#181818', boxShadow: '0 0 30px 2px #ff2e2e33, 0 0 10px #000a' }}>
+                <div style={{ cursor: 'pointer' }} onClick={() => setSelectedBook(book)}>
+                  {coverImage ? (
+                    <img
+                      src={coverImage}
+                      className="card-img-top"
+                      alt={title}
+                      style={{ height: 200, width: '100%', objectFit: 'contain', background: '#222', borderRadius: 8 }}
+                    />
+                  ) : (
+                    <div style={{ height: 200, width: '100%', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff2e2e', fontSize: 24, borderRadius: 8 }}>
+                      No image
+                    </div>
+                  )}
+                  <div className="card-body">
+                    <h5 className="card-title" style={{ color: '#ff2e2e', fontFamily: 'Special Elite, Creepster, serif' }}>{title}</h5>
+                    <p className="card-text">Auteur : {author}</p>
+                    <p className="card-text">Catégorie : {category}</p>
+                    <p className="card-text">Pages : {pages}</p>
+                    <p className="card-text">Statut : {status}</p>
+                  </div>
+                </div>
+                <div className="card-footer bg-transparent border-0 d-flex justify-content-end gap-2 mt-auto">
+                  <FavoriteButton
+                    isFavorite={isFavorite}
+                    onAdd={() => handleAddFavorite(_id)}
+                    onRemove={() => handleRemoveFavorite(_id)}
                   />
-                )}
-                <div className="card-body">
-                  <h5 className="card-title">{book.title}</h5>
-                  <p className="card-text">Auteur : {book.author}</p>
-                  <p className="card-text">Catégorie : {book.category}</p>
-                  <p className="card-text">Pages : {book.pages}</p>
-                  <p className="card-text">Statut : {book.status}</p>
+                  <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); setSelectedBook(book); }} title="Edit">Edit</button>
+                  <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); handleRemoveBook(_id); }} title="Remove book">Remove book</button>
                 </div>
               </div>
-              <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', gap: 8, position: 'absolute', bottom: 10, left: 0, zIndex: 2, paddingRight: 10 }}>
-                <FavoriteButton
-                  isFavorite={book.isFavorite}
-                  onAdd={() => handleAddFavorite(book._id)}
-                  onRemove={() => handleRemoveFavorite(book._id)}
-                />
-                <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); setSelectedBook(book); }} title="Edit">Edit</button>
-                <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); handleRemoveBook(book._id); }} title="Remove book">Remove book</button>
-              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       {selectedBook && (
         <BookModal

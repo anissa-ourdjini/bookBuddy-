@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = function (req, res, next) {
+  console.log('AUTH MIDDLEWARE: headers:', req.headers);
   const token = req.header('Authorization')?.replace('Bearer ', '');
   console.log('TOKEN:', token);
   if (!token) return res.status(401).json({ message: 'Accès refusé. Token manquant.' });
@@ -10,6 +11,7 @@ module.exports = function (req, res, next) {
     console.log('DECODED USER:', req.user);
     next();
   } catch (err) {
+    console.error('AUTH ERROR:', err);
     res.status(400).json({ message: 'Token invalide.' });
   }
 };
