@@ -67,7 +67,7 @@ const DeletedBooks = () => {
                     </button>
                   </>
                 }
-                style={{ width: '100%', minWidth: 250, maxWidth: 400 }}
+                style={{}}
               />
             </div>
           </div>
@@ -75,7 +75,7 @@ const DeletedBooks = () => {
           <div className="row d-flex justify-content-center g-4">
             {deletedBooks.length === 0 && <div className="text-center" style={{ color: '#fff' }}>Aucun livre supprimé.</div>}
             {deletedBooks.map((book) => (
-              <div className="col-md-4 mb-4 mx-auto px-2" key={book._id}>
+              <div className="col-12 col-sm-6 col-md-4 mb-4 mx-auto px-2" key={book._id}>
                 <BookCard
                   book={book}
                   onImageClick={null}
@@ -97,7 +97,7 @@ const DeletedBooks = () => {
                       </button>
                     </>
                   }
-                  style={{ width: '100%', minWidth: 250, maxWidth: 400 }}
+                  style={{}}
                 />
               </div>
             ))}

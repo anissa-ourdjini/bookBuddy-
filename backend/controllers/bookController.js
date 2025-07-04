@@ -1,5 +1,6 @@
 const Book = require('../models/Book');
 const User = require('../models/User');
+const Favorite = require('../models/Favorite');
 
 // Ajouter un livre
 exports.addBook = async (req, res) => {
@@ -85,6 +86,7 @@ exports.updateProgress = async (req, res) => {
 
 // Ajouter/retirer des favoris
 exports.addFavorite = async (req, res) => {
+  console.log('addFavorite called for book', req.params.id, 'by user', req.user.id);
   try {
     const book = await Book.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.id },
@@ -92,13 +94,22 @@ exports.addFavorite = async (req, res) => {
       { new: true }
     );
     await User.findByIdAndUpdate(req.user.id, { $addToSet: { favoris: req.params.id } });
+    // Ajout dans la collection favorites
+    const fav = await Favorite.findOneAndUpdate(
+      { userId: req.user.id, bookId: req.params.id },
+      { userId: req.user.id, bookId: req.params.id },
+      { upsert: true, new: true }
+    );
+    console.log('Favorite after add:', fav);
     res.json(book);
   } catch (err) {
+    console.error('addFavorite error:', err);
     res.status(500).json({ message: 'Erreur serveur.' });
   }
 };
 
 exports.removeFavorite = async (req, res) => {
+  console.log('removeFavorite called for book', req.params.id, 'by user', req.user.id);
   try {
     const book = await Book.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.id },
@@ -106,8 +117,12 @@ exports.removeFavorite = async (req, res) => {
       { new: true }
     );
     await User.findByIdAndUpdate(req.user.id, { $pull: { favoris: req.params.id } });
+    // Suppression dans la collection favorites
+    const favDel = await Favorite.findOneAndDelete({ userId: req.user.id, bookId: req.params.id });
+    console.log('Favorite after remove:', favDel);
     res.json(book);
   } catch (err) {
+    console.error('removeFavorite error:', err);
     res.status(500).json({ message: 'Erreur serveur.' });
   }
 };

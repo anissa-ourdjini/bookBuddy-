@@ -2,8 +2,14 @@ import React from 'react';
 
 const ConfirmModal = ({ show, onClose, onConfirm, message }) => {
   if (!show) return null;
+  // Ferme la modale si on clique sur le fond
+  const handleBackdropClick = (e) => {
+    if (e.target.classList.contains('modal')) {
+      onClose();
+    }
+  };
   return (
-    <div className="modal show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={handleBackdropClick}>
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">

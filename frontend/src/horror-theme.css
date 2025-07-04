@@ -25,6 +25,12 @@ body, .navbar, .card, .modal-content {
   border: 2px solid #ff2e2e;
   box-shadow: 0 0 30px 2px #ff2e2e33, 0 0 10px #000a;
   background: #181818 !important;
+  min-width: 250px;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
 }
 
 .card-title, .modal-title {
@@ -142,4 +148,130 @@ textarea:-moz-autofill {
   color: #ff2e2e !important;
   border: 1px solid #ff2e2e !important;
   font-family: 'Special Elite', 'Creepster', serif;
+}
+
+/* Responsive adjustments for horror theme */
+@media (max-width: 991.98px) {
+  .navbar {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  .card-title, .modal-title, .navbar-brand {
+    font-size: 1.5rem !important;
+  }
+  .btn {
+    font-size: 1rem;
+    padding: 0.5em 1em;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .navbar {
+    font-size: 0.95rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .card-title, .modal-title, .navbar-brand {
+    font-size: 1.2rem !important;
+  }
+  .btn {
+    font-size: 0.95rem;
+    padding: 0.4em 0.8em;
+  }
+  .card {
+    padding: 0.5em !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .navbar {
+    font-size: 0.9rem;
+    padding: 0.1rem 0.2rem;
+  }
+  .card-title, .modal-title, .navbar-brand {
+    font-size: 1rem !important;
+  }
+  .btn {
+    font-size: 0.9rem;
+    padding: 0.3em 0.6em;
+  }
+  .card {
+    padding: 0.25em !important;
+    min-width: 0;
+    max-width: 100vw;
+  }
+}
+
+.card-footer .btn {
+  min-width: 90px;
+  font-size: 0.95rem;
+  padding: 0.3em 0.6em;
+  margin: 0;
+  white-space: normal;
+}
+
+@media (max-width: 575.98px) {
+  .card-footer .btn {
+    min-width: 70px;
+    font-size: 0.85rem;
+    padding: 0.2em 0.4em;
+  }
+}
+
+.modal-footer .btn, .modal-header .btn, .modal-content .btn {
+  min-width: 90px;
+  font-size: 1rem;
+  padding: 0.4em 1em;
+  margin: 0 0.25em;
+  width: auto;
+  white-space: normal;
+}
+
+@media (max-width: 991.98px) {
+  .modal-footer .btn, .modal-header .btn, .modal-content .btn {
+    min-width: 0;
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 0.3em 0.5em;
+    margin: 0.25em 0 0 0;
+    display: block;
+  }
+  .modal-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5em;
+  }
+}
+
+@media (min-width: 768px) {
+  .row > [class*='col-'] > .card {
+    max-width: 350px !important;
+    width: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+@media (max-width: 575.98px) {
+  .card-actions {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+}
+
+.favorites-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+.favorites-row > [class*='col-'] {
+  display: flex;
+  justify-content: center;
 }

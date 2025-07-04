@@ -11,7 +11,6 @@ import AddBook from './pages/AddBook';
 import DeletedBooks from './pages/DeletedBooks';
 import Navbar from './components/Navbar';
 import './App.css';
-import './horror-theme.css';
 import { DeletedBooksProvider } from './components/DeletedBooksContext';
 
 function App() {

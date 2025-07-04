@@ -11,8 +11,6 @@ const BookCard = ({ book, onImageClick, footer, style = {} }) => {
   } = book || {};
 
   const defaultStyle = {
-    width: '100%',
-    maxWidth: 400,
     border: '2px solid #ff2e2e',
     background: '#181818',
     boxShadow: '0 0 30px 2px #ff2e2e33, 0 0 10px #000a',
@@ -42,7 +40,7 @@ const BookCard = ({ book, onImageClick, footer, style = {} }) => {
           <p className="card-text">Statut : {status}</p>
         </div>
       </div>
-      <div className="card-footer bg-transparent border-0 d-flex justify-content-end gap-2 mt-auto">
+      <div className="card-footer bg-transparent border-0 d-flex justify-content-center gap-2 mt-auto flex-wrap">
         {footer}
       </div>
     </div>

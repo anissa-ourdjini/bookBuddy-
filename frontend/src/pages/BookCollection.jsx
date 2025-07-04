@@ -137,7 +137,7 @@ const BookCollection = () => {
             _id
           } = book || {};
           return (
-            <div className="col-md-4 mb-4" key={_id}>
+            <div className="col-12 col-sm-6 col-md-4 mb-4" key={_id}>
               <div className="card h-100 d-flex flex-column justify-content-between" style={{ border: '2px solid #ff2e2e', background: '#181818', boxShadow: '0 0 30px 2px #ff2e2e33, 0 0 10px #000a' }}>
                 <div style={{ cursor: 'pointer' }} onClick={() => setSelectedBook(book)}>
                   {coverImage ? (
@@ -160,7 +160,7 @@ const BookCollection = () => {
                     <p className="card-text">Statut : {status}</p>
                   </div>
                 </div>
-                <div className="card-footer bg-transparent border-0 d-flex justify-content-end gap-2 mt-auto">
+                <div className="card-actions">
                   <FavoriteButton
                     isFavorite={isFavorite}
                     onAdd={() => handleAddFavorite(_id)}
