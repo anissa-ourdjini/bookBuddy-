@@ -122,7 +122,7 @@ const BookCollection = () => {
     <div className="container mt-5">
       <h2>My Collection</h2>
       <BookSearchFilter onFilter={handleFilter} />
-      {loading && <div>Chargement...</div>}
+      {loading && <div>Loading...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="row">
         {books.map((book) => {
@@ -154,10 +154,10 @@ const BookCollection = () => {
                   )}
                   <div className="card-body">
                     <h5 className="card-title" style={{ color: '#ff2e2e', fontFamily: 'Special Elite, Creepster, serif' }}>{title}</h5>
-                    <p className="card-text">Auteur : {author}</p>
-                    <p className="card-text">Catégorie : {category}</p>
-                    <p className="card-text">Pages : {pages}</p>
-                    <p className="card-text">Statut : {status}</p>
+                    <p className="card-text">Author: {author}</p>
+                    <p className="card-text">Category: {category}</p>
+                    <p className="card-text">Pages: {pages}</p>
+                    <p className="card-text">Status: {status === 'à lire' ? 'To read' : status === 'en cours de lecture' ? 'Reading' : status === 'terminé' ? 'Finished' : status}</p>
                   </div>
                 </div>
                 <div className="card-actions">

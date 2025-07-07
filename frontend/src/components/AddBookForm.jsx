@@ -15,7 +15,7 @@ const AddBookForm = ({ onBookAdded }) => {
     title: '',
     author: '',
     coverImage: '',
-    status: 'à lire',
+    status: 'Status',
     pages: '',
     category: '',
     isFavorite: false
@@ -28,7 +28,7 @@ const AddBookForm = ({ onBookAdded }) => {
     const { name, value, type, checked } = e.target;
     setForm({
       ...form,
-      [name]: name === 'pages' ? Number(value) : (type === 'checkbox' ? checked : value)
+      [name]: type === 'checkbox' ? checked : value
     });
   };
 
@@ -50,7 +50,7 @@ const AddBookForm = ({ onBookAdded }) => {
         },
         body: JSON.stringify({
           ...form,
-          pages: Number(form.pages),
+          pages: form.pages ? Number(form.pages) : '',
           userId,
           isFavorite: favorite
         })
@@ -58,7 +58,7 @@ const AddBookForm = ({ onBookAdded }) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Error while adding');
       setSuccess('Book added!');
-      setForm({ title: '', author: '', coverImage: '', status: 'à lire', pages: '', category: '', isFavorite: false });
+      setForm({ title: '', author: '', coverImage: '', status: '', pages: '', category: '', isFavorite: false });
       if (onBookAdded) onBookAdded();
     } catch (err) {
       setError(err.message);
@@ -90,11 +90,20 @@ const AddBookForm = ({ onBookAdded }) => {
           <input type="number" className="form-control" name="pages" placeholder="Number of pages" value={form.pages} onChange={handleChange} required min={1} />
         </div>
         <div className="col-md-6">
-          <select className="form-select" name="status" value={form.status} onChange={handleChange} required>
-            <option value="à lire">À lire</option>
-            <option value="en cours de lecture">En cours de lecture</option>
-            <option value="terminé">Terminé</option>
-          </select>
+          <input
+            className="form-control"
+            name="status"
+            list="status-options"
+            placeholder="Status"
+            value={form.status}
+            onChange={handleChange}
+            required
+          />
+          <datalist id="status-options">
+            <option value="To read" />
+            <option value="Reading" />
+            <option value="Finished" />
+          </datalist>
         </div>
         <div className="col-md-6">
           <input type="text" className="form-control" name="coverImage" placeholder="Cover image URL (optional)" value={form.coverImage} onChange={handleChange} />

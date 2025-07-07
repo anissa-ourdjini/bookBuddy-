@@ -73,7 +73,7 @@ const DeletedBooks = () => {
           </div>
         ) : (
           <div className="row d-flex justify-content-center g-4">
-            {deletedBooks.length === 0 && <div className="text-center" style={{ color: '#fff' }}>Aucun livre supprimé.</div>}
+            {deletedBooks.length === 0 && <div className="text-center" style={{ color: '#fff' }}>No deleted books.</div>}
             {deletedBooks.map((book) => (
               <div className="col-12 col-sm-6 col-md-4 mb-4 mx-auto px-2" key={book._id}>
                 <BookCard

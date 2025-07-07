@@ -7,14 +7,14 @@ const BookModal = ({ book, onClose, onUpdateStatus, onUpdateProgress }) => {
     category: book.category,
     pages: book.pages,
     coverImage: book.coverImage || '',
-    status: book.status
+    status: book.status || ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: name === 'pages' ? Number(value) : value });
+    setForm({ ...form, [name]: value });
   };
 
   const handleSave = async (e) => {
@@ -29,7 +29,7 @@ const BookModal = ({ book, onClose, onUpdateStatus, onUpdateProgress }) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ ...form, pages: Number(form.pages) })
+        body: JSON.stringify({ ...form, pages: form.pages ? Number(form.pages) : '' })
       });
       if (!res.ok) throw new Error('Error updating book');
       onClose();
@@ -73,7 +73,7 @@ const BookModal = ({ book, onClose, onUpdateStatus, onUpdateProgress }) => {
               </div>
               <div className="mb-2">
                 <label className="form-label">Pages</label>
-                <input type="number" className="form-control" name="pages" value={form.pages} onChange={handleChange} required min={1} />
+                <input type="number" className="form-control" name="pages" placeholder="Number of pages" value={form.pages} onChange={handleChange} required min={1} />
               </div>
               <div className="mb-2">
                 <label className="form-label">Cover image URL</label>
@@ -81,11 +81,20 @@ const BookModal = ({ book, onClose, onUpdateStatus, onUpdateProgress }) => {
               </div>
               <div className="mb-2">
                 <label className="form-label">Status</label>
-                <select className="form-select" name="status" value={form.status} onChange={handleChange} required>
-                  <option value="à lire">À lire</option>
-                  <option value="en cours de lecture">En cours de lecture</option>
-                  <option value="terminé">Terminé</option>
-                </select>
+                <input
+                  className="form-control"
+                  name="status"
+                  list="status-options"
+                  placeholder="Status"
+                  value={form.status}
+                  onChange={handleChange}
+                  required
+                />
+                <datalist id="status-options">
+                  <option value="To read" />
+                  <option value="Reading" />
+                  <option value="Finished" />
+                </datalist>
               </div>
             </div>
             <div className="modal-footer">
