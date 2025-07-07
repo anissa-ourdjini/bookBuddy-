@@ -1,5 +1,5 @@
 import React from 'react';
-import horrorBook from '../assets/image (1).jpg';
+import horrorBook from '../assets/image (2).jpg';
 import AudioIntro from '../components/AudioIntro';
 
 const Home = () => (

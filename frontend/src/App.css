@@ -77,3 +77,26 @@
     font-size: 1.1rem !important;
   }
 }
+
+input[type="date"].custom-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+input[type="date"].custom-date-input::-ms-input-placeholder {
+  color: transparent;
+}
+input[type="date"].custom-date-input::-moz-placeholder {
+  color: transparent;
+}
+input[type="date"].custom-date-input::-webkit-input-placeholder {
+  color: transparent;
+}
+input[type="date"].custom-date-input:focus::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+/* Pour Firefox */
+input[type="date"].custom-date-input::-moz-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
