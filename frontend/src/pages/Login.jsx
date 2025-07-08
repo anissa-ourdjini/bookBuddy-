@@ -8,6 +8,7 @@ const Login = () => {
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotMsg, setForgotMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,14 +49,45 @@ const Login = () => {
         </div>
         <div className="mb-3">
           <label className="form-label">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="form-control"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              style={{ paddingRight: 40 }}
+            />
+            <span
+              onClick={() => setShowPassword(v => !v)}
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                zIndex: 2
+              }}
+              tabIndex={0}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? (
+                // œil barré
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff2e2e" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17.94 17.94A10.06 10.06 0 0 1 12 20c-5 0-9.27-3.11-11-8 1.21-3.06 3.6-5.5 6.56-6.71" />
+                  <path d="M1 1l22 22" />
+                  <path d="M9.53 9.53A3.5 3.5 0 0 0 12 15.5c1.93 0 3.5-1.57 3.5-3.5 0-.47-.09-.92-.26-1.33" />
+                </svg>
+              ) : (
+                // œil ouvert
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff2e2e" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <ellipse cx="12" cy="12" rx="10" ry="7" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              )}
+            </span>
+          </div>
         </div>
         {error && <div className="alert alert-danger">{error}</div>}
         <button type="submit" className="btn btn-primary w-100">

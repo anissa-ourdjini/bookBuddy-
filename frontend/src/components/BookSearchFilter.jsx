@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const BookSearchFilter = ({ onFilter }) => {
   const [search, setSearch] = useState('');
@@ -125,6 +125,10 @@ const BookSearchFilter = ({ onFilter }) => {
     c.toLowerCase().includes(category.toLowerCase()) && category.trim() !== ''
   );
 
+  useEffect(() => {
+    console.log('BookSearchFilter mounted or updated');
+  }, []);
+
   return (
     <form className="row g-2 mb-4" onSubmit={handleSubmit} autoComplete="off">
       <div className="col-md-3 position-relative">
@@ -203,12 +207,22 @@ const BookSearchFilter = ({ onFilter }) => {
         )}
       </div>
       <div className="col-md-2">
-        <select className="form-select" value={status} onChange={e => setStatus(e.target.value)}>
-          <option value="">Status</option>
-          <option value="to read">To read</option>
-          <option value="reading">Reading</option>
-          <option value="finished">Finished</option>
-        </select>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Status"
+          value={status}
+          onChange={e => {
+            setStatus(e.target.value);
+            console.log('Status onChange:', e.target.value);
+          }}
+          onFocus={e => {
+            console.log('Status onFocus, selectionStart:', e.target.selectionStart, 'selectionEnd:', e.target.selectionEnd);
+          }}
+          onSelect={e => {
+            console.log('Status onSelect, selectionStart:', e.target.selectionStart, 'selectionEnd:', e.target.selectionEnd);
+          }}
+        />
       </div>
       <div className="col-md-1">
         <button type="submit" className="btn btn-primary w-100">Filter</button>

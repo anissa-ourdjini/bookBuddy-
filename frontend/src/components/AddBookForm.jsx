@@ -34,6 +34,7 @@ const AddBookForm = ({ onBookAdded }) => {
   const [showContextForm, setShowContextForm] = useState(false);
   const [hideContextForm, setHideContextForm] = useState(false);
   const contextRef = useRef(null);
+  const statusInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -139,9 +140,23 @@ const AddBookForm = ({ onBookAdded }) => {
               value={form.status}
               onChange={handleChange}
               required
+              ref={statusInputRef}
               onFocus={e => {
-                if (e.target.value === "Status") {
-                  e.target.setSelectionRange(0, 0);
+                if (form.status === 'Status') {
+                  setTimeout(() => {
+                    if (statusInputRef.current) {
+                      statusInputRef.current.setSelectionRange(0, 0);
+                    }
+                  }, 0);
+                }
+              }}
+              onMouseDown={e => {
+                if (form.status === 'Status') {
+                  e.preventDefault();
+                  if (statusInputRef.current) {
+                    statusInputRef.current.focus();
+                    statusInputRef.current.setSelectionRange(0, 0);
+                  }
                 }
               }}
             />
