@@ -207,22 +207,19 @@ const BookSearchFilter = ({ onFilter }) => {
         )}
       </div>
       <div className="col-md-2">
-        <input
-          type="text"
+        <select
           className="form-control"
-          placeholder="Status"
           value={status}
           onChange={e => {
             setStatus(e.target.value);
             console.log('Status onChange:', e.target.value);
           }}
-          onFocus={e => {
-            console.log('Status onFocus, selectionStart:', e.target.selectionStart, 'selectionEnd:', e.target.selectionEnd);
-          }}
-          onSelect={e => {
-            console.log('Status onSelect, selectionStart:', e.target.selectionStart, 'selectionEnd:', e.target.selectionEnd);
-          }}
-        />
+        >
+          <option value="">Status</option>
+          <option value="to read">To read</option>
+          <option value="reading">Reading</option>
+          <option value="finished">Finished</option>
+        </select>
       </div>
       <div className="col-md-1">
         <button type="submit" className="btn btn-primary w-100">Filter</button>

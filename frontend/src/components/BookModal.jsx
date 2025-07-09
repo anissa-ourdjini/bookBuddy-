@@ -120,15 +120,18 @@ const BookModal = ({ book, onClose, onUpdateStatus, onUpdateProgress }) => {
               <div className="mb-2">
                 <label className="form-label">Status</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <input
-                    type="text"
+                  <select
                     className="form-control"
                     name="status"
-                    placeholder="Status"
                     value={form.status}
                     onChange={handleChange}
                     required
-                  />
+                  >
+                    <option value="">Status</option>
+                    <option value="to read">To read</option>
+                    <option value="reading">Reading</option>
+                    <option value="finished">Finished</option>
+                  </select>
                 </div>
               </div>
               {showContextForm && (

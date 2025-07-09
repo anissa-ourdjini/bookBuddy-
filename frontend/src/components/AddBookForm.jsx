@@ -132,34 +132,18 @@ const AddBookForm = ({ onBookAdded }) => {
         </div>
         <div className="col-md-6">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <input
-              type="text"
+            <select
               className="form-control"
               name="status"
-              placeholder="Status"
               value={form.status}
               onChange={handleChange}
               required
-              ref={statusInputRef}
-              onFocus={e => {
-                if (form.status === 'Status') {
-                  setTimeout(() => {
-                    if (statusInputRef.current) {
-                      statusInputRef.current.setSelectionRange(0, 0);
-                    }
-                  }, 0);
-                }
-              }}
-              onMouseDown={e => {
-                if (form.status === 'Status') {
-                  e.preventDefault();
-                  if (statusInputRef.current) {
-                    statusInputRef.current.focus();
-                    statusInputRef.current.setSelectionRange(0, 0);
-                  }
-                }
-              }}
-            />
+            >
+              <option value="">Status</option>
+              <option value="to read">To read</option>
+              <option value="reading">Reading</option>
+              <option value="finished">Finished</option>
+            </select>
           </div>
         </div>
         <div className="col-md-6">
