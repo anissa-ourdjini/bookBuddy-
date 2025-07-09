@@ -3,6 +3,7 @@ import cw from '../assets/cw.jpg';
 import M from '../assets/M.jpg';
 import rl from '../assets/rl.png';
 import mh from '../assets/mh.jpg';
+import questionMark from '../assets/questionMark.png';
 import ConfirmModal from '../components/ConfirmModal';
 
 const rewardsData = [
@@ -19,7 +20,7 @@ const Rewards = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [removeIndex, setRemoveIndex] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const booksRead = 300; // À remplacer par la vraie valeur utilisateur
+  const booksRead = 0; // Test : toutes les récompenses sont cachées
   const [deletedRewards, setDeletedRewards] = useState([]);
   const [confirmRemoveDeleted, setConfirmRemoveDeleted] = useState({ show: false, reward: null });
   const [newReward, setNewReward] = useState({ count: '', img: '', label: '' });
@@ -100,9 +101,9 @@ const Rewards = () => {
       <div className="row justify-content-center mt-4">
         {rewards.map((r, idx) => (
           <div className="col-md-3 mb-4" key={r.count}>
-            <div className="card h-100 p-2 d-flex flex-column justify-content-between" style={{ border: booksRead >= r.count ? '2px solid #ff2e2e' : '2px solid #888', background: booksRead >= r.count ? '#181818' : '#333', width: '100%', maxWidth: 400 }}>
-              <img src={r.img} alt={r.label} className="img-fluid mb-2" style={{ maxHeight: 180, objectFit: 'contain', borderRadius: 8, boxShadow: booksRead >= r.count ? '0 0 16px #ff2e2e' : 'none' }} />
-              <h5 style={{ color: booksRead >= r.count ? '#ff2e2e' : '#aaa', fontFamily: 'Special Elite, Creepster, serif' }}>{r.label}</h5>
+            <div className="card h-100 p-2 d-flex flex-column justify-content-between" style={{ border: '2px solid #ff2e2e', background: booksRead >= r.count ? '#181818' : '#333', width: '100%', maxWidth: 400 }}>
+              <img src={booksRead >= r.count ? r.img : questionMark} alt={r.label} className="img-fluid mb-2" style={{ maxHeight: 180, objectFit: 'contain', borderRadius: 8, boxShadow: booksRead >= r.count ? '0 0 16px #ff2e2e' : 'none' }} />
+              <h5 style={{ color: '#ff2e2e', fontFamily: 'Special Elite, Creepster, serif' }}>{r.label}</h5>
               <div className="d-flex justify-content-center gap-2 mt-3 mt-auto">
                 <button className="btn btn-primary btn-sm" onClick={() => handleEdit(idx)}>Edit</button>
                 <button className="btn btn-primary btn-sm" onClick={() => handleRemove(idx)}>Remove rewards</button>
