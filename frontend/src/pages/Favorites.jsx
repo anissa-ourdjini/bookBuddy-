@@ -64,6 +64,16 @@ const Favorites = () => {
     await fetchFavorites(); // Rafraîchit la liste après ajout
   };
 
+  // Ajout de la fonction d'harmonisation
+  const getDisplayStatus = (status) => {
+    if (!status) return '';
+    const s = status.toLowerCase();
+    if (s === 'à lire' || s === 'to read') return 'To read';
+    if (s === 'en cours de lecture' || s === 'reading') return 'Reading';
+    if (s === 'terminé' || s === 'finished') return 'Finished';
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
   return (
     <div className="container mt-5">
       <h2>My Favorites</h2>
@@ -87,7 +97,7 @@ const Favorites = () => {
                 <p className="card-text">Author: {books[0].author}</p>
                 <p className="card-text">Category: {books[0].category}</p>
                 <p className="card-text">Pages: {books[0].pages}</p>
-                <p className="card-text">Status: {books[0].status === 'à lire' ? 'To read' : books[0].status === 'en cours de lecture' ? 'Reading' : books[0].status === 'terminé' ? 'Finished' : books[0].status}</p>
+                <p className="card-text">Status: {getDisplayStatus(books[0].status)}</p>
                 <div className="card-actions">
                   <button className="btn btn-warning btn-sm" onClick={() => handleRemoveFavorite(books[0]._id)} title="Remove from favorites">
                     ★ Remove from favorites
@@ -112,7 +122,7 @@ const Favorites = () => {
                   <p className="card-text">Author: {book.author}</p>
                   <p className="card-text">Category: {book.category}</p>
                   <p className="card-text">Pages: {book.pages}</p>
-                  <p className="card-text">Status: {book.status === 'à lire' ? 'To read' : book.status === 'en cours de lecture' ? 'Reading' : book.status === 'terminé' ? 'Finished' : book.status}</p>
+                  <p className="card-text">Status: {getDisplayStatus(book.status)}</p>
                   <div className="card-actions">
                     <FavoriteButton
                       isFavorite={book.isFavorite}

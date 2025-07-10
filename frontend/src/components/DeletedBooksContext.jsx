@@ -22,8 +22,17 @@ export const DeletedBooksProvider = ({ children }) => {
     setDeletedBooks((prev) => prev.filter((b) => b._id !== bookId));
   };
 
-  const removeDeletedBook = (bookId) => {
-    setDeletedBooks((prev) => prev.filter((b) => b._id !== bookId));
+  const removeDeletedBook = async (bookId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await fetch(`http://localhost:5000/books/${bookId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDeletedBooks((prev) => prev.filter((b) => b._id !== bookId));
+    } catch (err) {
+      alert('Erreur lors de la suppression définitive du livre.');
+    }
   };
 
   return (

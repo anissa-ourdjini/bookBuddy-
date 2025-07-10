@@ -36,6 +36,12 @@ const AddBookForm = ({ onBookAdded }) => {
   const contextRef = useRef(null);
   const statusInputRef = useRef(null);
 
+  const statusMap = {
+    'to read': 'à lire',
+    'reading': 'en cours de lecture',
+    'finished': 'terminé',
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({
@@ -63,6 +69,7 @@ const AddBookForm = ({ onBookAdded }) => {
         },
         body: JSON.stringify({
           ...form,
+          status: statusMap[form.status] || form.status,
           pages: form.pages ? Number(form.pages) : '',
           userId,
           isFavorite: favorite,

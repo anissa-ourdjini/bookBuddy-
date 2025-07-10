@@ -114,6 +114,16 @@ const BookCollection = () => {
     fetchBooks({ ...filters, status: backendStatus });
   };
 
+  // Ajout de la fonction d'harmonisation
+  const getDisplayStatus = (status) => {
+    if (!status) return '';
+    const s = status.toLowerCase();
+    if (s === 'à lire' || s === 'to read') return 'To read';
+    if (s === 'en cours de lecture' || s === 'reading') return 'Reading';
+    if (s === 'terminé' || s === 'finished') return 'Finished';
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
   useEffect(() => {
     fetchBooks();
   }, []);
@@ -157,7 +167,7 @@ const BookCollection = () => {
                     <p className="card-text">Author: {author}</p>
                     <p className="card-text">Category: {category}</p>
                     <p className="card-text">Pages: {pages}</p>
-                    <p className="card-text">Status: {status === 'à lire' ? 'To read' : status === 'en cours de lecture' ? 'Reading' : status === 'terminé' ? 'Finished' : status}</p>
+                    <p className="card-text">Status: {getDisplayStatus(status)}</p>
                   </div>
                 </div>
                 <div className="card-actions">
