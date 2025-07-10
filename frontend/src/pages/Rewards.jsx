@@ -102,7 +102,12 @@ const Rewards = () => {
         {rewards.map((r, idx) => (
           <div className="col-md-3 mb-4" key={r.count}>
             <div className="card h-100 p-2 d-flex flex-column justify-content-between" style={{ border: '2px solid #ff2e2e', background: booksRead >= r.count ? '#181818' : '#333', width: '100%', maxWidth: 400 }}>
-              <img src={booksRead >= r.count ? r.img : questionMark} alt={r.label} className="img-fluid mb-2" style={{ maxHeight: 180, objectFit: 'contain', borderRadius: 8, boxShadow: booksRead >= r.count ? '0 0 16px #ff2e2e' : 'none' }} />
+              <div style={{position: 'relative', width: '100%', maxWidth: 180, margin: '0 auto'}}>
+                <img src={r.img} alt={r.label} className="img-fluid mb-2" style={{ maxHeight: 180, objectFit: 'contain', borderRadius: 8, boxShadow: booksRead >= r.count ? '0 0 16px #ff2e2e' : 'none', width: '100%', display: 'block' }} />
+                {booksRead < r.count && (
+                  <img src={questionMark} alt="hidden" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8, zIndex: 2, pointerEvents: 'none', background: 'rgba(0,0,0,0.2)' }} />
+                )}
+              </div>
               <h5 style={{ color: '#ff2e2e', fontFamily: 'Special Elite, Creepster, serif' }}>{r.label}</h5>
               <div className="d-flex justify-content-center gap-2 mt-3 mt-auto">
                 <button className="btn btn-primary btn-sm" onClick={() => handleEdit(idx)}>Edit</button>

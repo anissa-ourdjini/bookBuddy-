@@ -36,7 +36,7 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             {navItems.map(item => (
-              (item.to === '/register' || !isLoggedIn || (item.to !== '/login')) && (
+              ((item.to === '/register' && !isLoggedIn) || (item.to !== '/register' && (item.to !== '/login' || !isLoggedIn) )) && (
                 <li className="nav-item" key={item.to}>
                   <Link className={`nav-link${location.pathname === item.to ? ' active' : ''}`} to={item.to}>{item.label}</Link>
                 </li>
